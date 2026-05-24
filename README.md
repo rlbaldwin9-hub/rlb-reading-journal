@@ -25,7 +25,7 @@ Open `rlb-catalog.json` and copy/paste one of the existing blocks:
 ```json
 {
   "title": "Your New Book Title",
-  "author": "R.L. Bradford",
+  "author": "R.L. Baldwin",
   "genre": "Genre Here",
   "asin": "B0XXXXXXXXX",
   "desc": "A short, warm description of the book (1–2 sentences).",
@@ -45,29 +45,6 @@ Open `rlb-catalog.json` and copy/paste one of the existing blocks:
 - Warm Tan: `#d4c4a8`
 
 ---
-
-## Setup instructions
-
-### Step 1 — Create a GitHub account
-Go to [github.com](https://github.com) and sign up (free).
-
-### Step 2 — Create a new repository
-1. Click the **+** icon → **New repository**
-2. Name it: `rlb-reading-journal`
-3. Set to **Public**
-4. Click **Create repository**
-
-### Step 3 — Upload your files
-1. Click **uploading an existing file** (or drag-and-drop)
-2. Upload both `index.html` and `rlb-catalog.json`
-3. Click **Commit changes**
-
-### Step 4 — Enable GitHub Pages
-1. Go to your repo → **Settings** → **Pages** (left sidebar)
-2. Under **Source**, select **Deploy from a branch**
-3. Branch: `main` | Folder: `/ (root)`
-4. Click **Save**
-5. Wait ~2 minutes, then visit the URL shown
 
 ### Step 5 — (Optional) Connect your custom domain
 If you want `journal.rlbdesigns.com` instead of the GitHub URL:
