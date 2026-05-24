@@ -208,12 +208,44 @@ body { font-family: 'Lato', sans-serif; background: var(--cream); color: var(--t
   <!-- API Key notice -->
   <div class="notice-bar gold" id="api-notice">
     <div style="flex:1">
-      <strong class="gold">✨ Enable AI-Powered Recommendations</strong>
-      Enter your Anthropic API key to get personalized book recommendations powered by Claude. Your key is stored only in your browser.
-      <div class="input-row">
-        <input type="password" id="api-key-input" placeholder="sk-ant-…" autocomplete="off">
+      <strong class="gold">✨ Enable AI-Powered Book Recommendations — It's Free!</strong>
+      This journal uses Claude AI to give you personalized book picks based on what you love to read. To turn it on, you just need a free API key from Anthropic (the company that makes Claude). It takes about 2 minutes and costs nothing.
+      <br><br>
+      <span id="toggle-instructions" style="cursor:pointer;color:var(--gold);font-weight:700;font-size:13px;text-decoration:underline;text-underline-offset:2px;" onclick="toggleApiInstructions()">▶ Show me how to get my free key</span>
+
+      <div id="api-instructions" style="display:none;margin-top:14px;background:#fffdf5;border:1px solid var(--gold-light);border-radius:10px;padding:16px 18px;">
+        <div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--text-dark);margin-bottom:10px;">How to get your free Anthropic API key</div>
+        <ol style="padding-left:18px;display:flex;flex-direction:column;gap:10px;font-size:13px;color:var(--text-mid);line-height:1.6;">
+          <li>
+            <strong style="color:var(--text-dark)">Go to the Anthropic Console</strong><br>
+            Open a new browser tab and visit <a href="https://console.anthropic.com" target="_blank" style="color:var(--gold);font-weight:700;">console.anthropic.com</a>
+          </li>
+          <li>
+            <strong style="color:var(--text-dark)">Create a free account</strong><br>
+            Click <em>"Sign up"</em> and register with your email address. No credit card is required to get started — Anthropic includes free credits when you create a new account.
+          </li>
+          <li>
+            <strong style="color:var(--text-dark)">Go to API Keys</strong><br>
+            Once you're logged in, click your name or the menu in the top-right corner, then select <em>"API Keys"</em> from the sidebar.
+          </li>
+          <li>
+            <strong style="color:var(--text-dark)">Create a new key</strong><br>
+            Click <em>"Create Key"</em>, give it a name like <em>"Reading Journal"</em>, then click <em>"Create Key"</em> again. Your key will appear on screen — it starts with <code style="background:var(--cream-dark);padding:1px 5px;border-radius:4px;font-size:12px;">sk-ant-</code>
+          </li>
+          <li>
+            <strong style="color:var(--text-dark)">Copy &amp; paste it below</strong><br>
+            Copy the key (the whole thing), paste it into the box below, and click <em>"Save Key"</em>. That's it!
+          </li>
+        </ol>
+        <div style="margin-top:12px;padding:10px 14px;background:var(--sage-pale);border-radius:8px;font-size:12px;color:var(--text-mid);line-height:1.5;">
+          🔒 <strong style="color:var(--sage)">Your privacy:</strong> Your API key is saved only in <em>your</em> browser on <em>your</em> device. It is never sent to this website or stored anywhere online. Only you have it.
+        </div>
+      </div>
+
+      <div class="input-row" style="margin-top:14px;">
+        <input type="password" id="api-key-input" placeholder="Paste your key here — starts with sk-ant-…" autocomplete="off">
         <button class="btn btn-sm btn-gold" onclick="saveApiKey()">Save Key</button>
-        <button class="btn btn-sm btn-ghost" onclick="dismissNotice('api-notice')">Skip</button>
+        <button class="btn btn-sm btn-ghost" onclick="dismissNotice('api-notice')">Skip for now</button>
       </div>
     </div>
   </div>
@@ -223,7 +255,7 @@ body { font-family: 'Lato', sans-serif; background: var(--cream); color: var(--t
     <button class="tab-btn" onclick="switchTab('add')">＋ Log a Book</button>
     <button class="tab-btn" onclick="switchTab('goals')">🎯 Goals</button>
     <button class="tab-btn" onclick="switchTab('recs')">✨ Recommendations</button>
-    <button class="tab-btn" onclick="switchTab('catalog')">🏪 RLB Catalog</button>
+    <button class="tab-btn" onclick="switchTab('catalog')">🏪 My Catalog</button>
   </div>
 
   <!-- ── SHELF ── -->
@@ -328,16 +360,31 @@ body { font-family: 'Lato', sans-serif; background: var(--cream); color: var(--t
     <div id="recs-list"></div>
   </div>
 
-  <!-- ── RLB CATALOG ── -->
+  <!-- ── MY CATALOG ── -->
   <div id="panel-catalog" class="panel">
     <div class="section-header">
-      <h2>RLB Designs Catalog</h2>
-      <a href="https://rlbdesigns.com" target="_blank" class="btn btn-sm btn-sage">Visit Store →</a>
+      <h2 id="catalog-heading">My Catalog</h2>
+      <a href="https://www.rlbdesigns.com" target="_blank" class="btn btn-sm btn-sage">Visit Store →</a>
+    </div>
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <label style="font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--text-light);white-space:nowrap;">Catalog Name</label>
+      <input type="text" id="catalog-name-input" placeholder="e.g. My Book Collection, Rachel's Picks…"
+        style="flex:1;min-width:180px;padding:7px 12px;border:1px solid var(--border);border-radius:8px;font-family:'Lato',sans-serif;font-size:13px;background:var(--cream);color:var(--text-dark);"
+        oninput="saveCatalogName(this.value)">
+      <span style="font-size:12px;color:var(--text-light);font-style:italic">This name appears as your catalog heading.</span>
     </div>
     <div id="catalog-status" style="font-size:13px;color:var(--text-light);margin-bottom:14px;font-style:italic"></div>
     <div class="catalog-grid" id="catalog-grid">
       <div class="ai-loading"><div class="spinner"></div><em>Loading catalog…</em></div>
     </div>
+  </div>
+
+
+  <!-- Footer -->
+  <div style="text-align:center;margin-top:48px;padding-top:20px;border-top:1px solid var(--cream-dark);">
+    <span style="font-size:12px;color:var(--text-light);font-family:'Lato',sans-serif;letter-spacing:.3px;">
+      &copy; <span id="footer-year"></span> RLB Designs &nbsp;·&nbsp; <a href="https://www.rlbdesigns.com" target="_blank" style="color:var(--sage);text-decoration:none;">rlbdesigns.com</a>
+    </span>
   </div>
 
 </div>
@@ -365,8 +412,8 @@ body { font-family: 'Lato', sans-serif; background: var(--cream); color: var(--t
 // ═══════════════════════════════════════════════════════
 //  CONFIG — UPDATE THESE TWO LINES
 // ═══════════════════════════════════════════════════════
-const REVIEW_FORM_URL = 'https://rlbdesigns.com/book-review';
-const SITE_URL        = 'https://rlbdesigns.com';
+const REVIEW_FORM_URL = 'https://www.rlbdesigns.com/leave-a-review';
+const SITE_URL        = 'https://www.rlbdesigns.com';
 // Catalog JSON URL — host rlb-catalog.json at this path on your site:
 const CATALOG_URL = './rlb-catalog.json';
 // ═══════════════════════════════════════════════════════
@@ -375,8 +422,6 @@ const SPINE_COLORS = ['#7a9e87','#d4a5a0','#c9a84c','#8ba3c4','#c4a8d4','#d4c4a8
 
 // Built-in fallback catalog (used if JSON fetch fails or for AI prompting)
 const FALLBACK_CATALOG = [
-  { title:"The Enchanted Storyteller's Studio", author:"R.L. Bradford", genre:"Fantasy / Adventure", asin:"", desc:"A 212-page magical writing and creativity journal for young fantasy lovers, ages 8–13.", color:"#c4a8d4" },
-  { title:"The Galactic Storyteller's Studio",  author:"R.L. Bradford", genre:"Science Fiction",    asin:"", desc:"A blueprint-aesthetic sci-fi writing journal for young adventurers who dream of galaxies, ages 8–13.", color:"#8ba3c4" },
   { title:"Clean Table: Garden-to-Table Recipes", author:"R.L. Bradford", genre:"Cookbook / Recipe", asin:"", desc:"Alpha-Gal safe, dairy-free recipes built around organic whole ingredients for clean eating and cancer recovery.", color:"#7a9e87" },
   { title:"Zentangle Mandalas: A Coloring Journey", author:"R.L. Bradford", genre:"Coloring Book",  asin:"", desc:"Intricate mandala and zentangle designs for mindful, meditative coloring — teens and adults.", color:"#d4a5a0" },
   { title:"Meadow Friends Adventures", author:"R.L. Bradford", genre:"Children's Picture Book",      asin:"", desc:"Sweet nature-inspired picture books starring loveable animal characters, ages 4–7.", color:"#c9a84c" },
@@ -386,10 +431,20 @@ let books = [], rating = 0, selectedColor = SPINE_COLORS[0], currentFilter = 'al
 let goalTarget = 24, apiKey = '', liveCatalog = null, shareMode = false;
 
 // ─── INIT ───────────────────────────────────────────────────────
+function saveCatalogName(name) {
+  localStorage.setItem('rlb_catalog_name', name);
+  document.getElementById('catalog-heading').textContent = name.trim() || 'My Catalog';
+}
+
 function load() {
   try { books = JSON.parse(localStorage.getItem('rlb_journal_books') || '[]'); } catch(e) { books = []; }
   try { goalTarget = parseInt(localStorage.getItem('rlb_goal') || '24'); } catch(e) { goalTarget = 24; }
   apiKey = localStorage.getItem('rlb_api_key') || '';
+  const savedCatalogName = localStorage.getItem('rlb_catalog_name') || '';
+  if (savedCatalogName) {
+    document.getElementById('catalog-heading').textContent = savedCatalogName;
+    document.getElementById('catalog-name-input').value = savedCatalogName;
+  }
   if (apiKey) dismissNotice('api-notice');
   document.getElementById('goal-input').value = goalTarget;
   initColorPicker(); initStars();
@@ -436,7 +491,7 @@ async function loadCatalog() {
     if (!res.ok) throw new Error('not found');
     liveCatalog = await res.json();
     document.getElementById('catalog-status').textContent =
-      `${liveCatalog.length} titles — last updated from rlbdesigns.com`;
+      `${liveCatalog.length} title${liveCatalog.length!==1?'s':''} in your catalog`;
   } catch(e) {
     liveCatalog = FALLBACK_CATALOG;
     document.getElementById('catalog-status').textContent =
@@ -452,9 +507,7 @@ function renderCatalog() {
     return;
   }
   grid.innerHTML = liveCatalog.map(b => {
-    const amazonLink = b.asin
-      ? `https://www.amazon.com/dp/${b.asin}?tag=rlbdesigns-20`
-      : SITE_URL;
+    const amazonLink = 'https://www.amazon.com/stores/Rachel-Baldwin/author/B0FGJZ6FRF';
     return `<div class="catalog-card">
       <div class="catalog-card-top" style="background:${b.color||'var(--sage)'}"></div>
       <div class="catalog-card-body">
@@ -483,6 +536,14 @@ function addFromCatalog(title, author, genre, color) {
 }
 
 // ─── API KEY ────────────────────────────────────────────────────
+function toggleApiInstructions() {
+  const box = document.getElementById('api-instructions');
+  const toggle = document.getElementById('toggle-instructions');
+  const open = box.style.display === 'none';
+  box.style.display = open ? 'block' : 'none';
+  toggle.textContent = open ? '▼ Hide instructions' : '▶ Show me how to get my free key';
+}
+
 function saveApiKey() {
   const v = document.getElementById('api-key-input').value.trim();
   if (!v.startsWith('sk-ant-')) { toast("That doesn't look like a valid Anthropic key (starts with sk-ant-)."); return; }
@@ -881,6 +942,7 @@ function escHtml(s) {
 document.getElementById('share-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
 
 load();
+document.getElementById('footer-year').textContent = new Date().getFullYear();
 </script>
 </body>
 </html>
