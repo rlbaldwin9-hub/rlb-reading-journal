@@ -12,7 +12,7 @@ A beautiful, interactive reading journal for [rlbdesigns.com](https://rlbdesigns
 ## Live site
 
 Once deployed, your journal will be live at:
-`https://YOUR-USERNAME.github.io/rlb-reading-journal/`
+`https://rlbaldwin9-hub.github.io/rlb-reading-journal/`
 
 Or at your custom domain if configured.
 
