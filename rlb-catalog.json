@@ -1,0 +1,47 @@
+[
+  {
+    "title": "The Enchanted Storyteller's Studio",
+    "author": "R.L. Bradford",
+    "genre": "Fantasy / Adventure",
+    "asin": "",
+    "desc": "A 212-page magical writing and creativity journal for young fantasy lovers. Perfect for girls ages 8–13 who dream of spinning their own stories.",
+    "color": "#c4a8d4",
+    "tags": ["journal", "fantasy", "girls", "ages 8-13", "creative writing", "gift"]
+  },
+  {
+    "title": "The Galactic Storyteller's Studio",
+    "author": "R.L. Bradford",
+    "genre": "Science Fiction",
+    "asin": "",
+    "desc": "A blueprint-aesthetic sci-fi writing journal for young adventurers who dream of galaxies and robots. For boys ages 8–13.",
+    "color": "#8ba3c4",
+    "tags": ["journal", "sci-fi", "boys", "ages 8-13", "creative writing", "gift"]
+  },
+  {
+    "title": "Clean Table: Garden-to-Table Recipes",
+    "author": "R.L. Bradford",
+    "genre": "Cookbook / Recipe",
+    "asin": "",
+    "desc": "Alpha-Gal safe, dairy-free, mammal-free recipes built around organic, whole ingredients. Ideal for clean eating and cancer recovery nutrition.",
+    "color": "#7a9e87",
+    "tags": ["cookbook", "alpha-gal", "dairy-free", "clean eating", "wellness", "garden"]
+  },
+  {
+    "title": "Zentangle Mandalas: A Coloring Journey",
+    "author": "R.L. Bradford",
+    "genre": "Coloring Book",
+    "asin": "",
+    "desc": "Intricate mandala and zentangle designs for mindful, meditative coloring. Loved by teens and adults for stress relief and creative flow.",
+    "color": "#d4a5a0",
+    "tags": ["coloring", "mandala", "zentangle", "adults", "mindfulness", "art"]
+  },
+  {
+    "title": "Meadow Friends Adventures",
+    "author": "R.L. Bradford",
+    "genre": "Children's Picture Book",
+    "asin": "",
+    "desc": "Sweet, nature-inspired picture books starring loveable animal characters. Perfect for ages 4–7.",
+    "color": "#c9a84c",
+    "tags": ["picture book", "children", "ages 4-7", "nature", "animals", "gift"]
+  }
+]

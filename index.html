@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Reading Journal — RLB Designs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --sage: #7a9e87; --sage-light: #c8ddd0; --sage-pale: #eef4f0;
+  --blush: #d4a5a0; --blush-light: #f0dbd9; --blush-pale: #faf5f4;
+  --cream: #f5f0e8; --cream-dark: #e8dfc8;
+  --gold: #c9a84c; --gold-light: #f0e4c0; --gold-pale: #faf5e6;
+  --text-dark: #3a3028; --text-mid: #6b5f52; --text-light: #9a8e82;
+  --border: #ddd5c8; --white: #fffdf9;
+  --shadow: 0 2px 16px rgba(58,48,40,0.09);
+}
+body { font-family: 'Lato', sans-serif; background: var(--cream); color: var(--text-dark); min-height: 100vh; line-height: 1.6; }
+.journal-wrap { max-width: 940px; margin: 0 auto; padding: 24px 20px 80px; }
+
+/* HEADER */
+.journal-header { text-align: center; padding: 36px 0 28px; border-bottom: 1px solid var(--cream-dark); margin-bottom: 28px; }
+.journal-header h1 { font-family: 'Playfair Display', serif; font-size: 40px; letter-spacing: -0.5px; line-height: 1.2; }
+.journal-header h1 span { color: var(--sage); }
+.journal-header p { font-size: 15px; color: var(--text-light); margin-top: 8px; font-style: italic; font-family: 'Playfair Display', serif; }
+.brand-tag { display: inline-block; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); border: 1px solid var(--gold); padding: 4px 14px; border-radius: 20px; margin-bottom: 14px; }
+
+/* NOTICE BARS */
+.notice-bar { border-radius: 12px; padding: 14px 18px; font-size: 13px; color: var(--text-mid); margin-bottom: 14px; display: flex; align-items: flex-start; gap: 12px; }
+.notice-bar.gold { background: var(--gold-pale); border: 1px solid var(--gold-light); }
+.notice-bar.sage { background: var(--sage-pale); border: 1px solid var(--sage-light); }
+.notice-bar strong { display: block; margin-bottom: 4px; }
+.notice-bar strong.gold { color: var(--gold); }
+.notice-bar strong.sage { color: var(--sage); }
+.input-row { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.input-row input { flex: 1; min-width: 200px; padding: 7px 12px; border: 1px solid var(--gold-light); border-radius: 8px; font-family: 'Lato', sans-serif; font-size: 13px; background: var(--white); color: var(--text-dark); }
+.input-row input:focus { outline: none; border-color: var(--gold); }
+
+/* TABS */
+.tabs { display: flex; gap: 4px; margin-bottom: 24px; background: var(--cream-dark); padding: 4px; border-radius: 14px; }
+.tab-btn { flex: 1; padding: 10px 10px; border: none; background: transparent; border-radius: 10px; font-family: 'Lato', sans-serif; font-size: 12px; color: var(--text-mid); cursor: pointer; transition: all .2s; font-weight: 400; }
+.tab-btn.active { background: var(--white); color: var(--text-dark); font-weight: 700; box-shadow: 0 1px 4px rgba(58,48,40,.10); }
+.tab-btn:hover:not(.active) { color: var(--text-dark); }
+.panel { display: none; } .panel.active { display: block; }
+
+/* BUTTONS */
+.btn { padding: 8px 18px; border-radius: 9px; font-size: 13px; font-family: 'Lato', sans-serif; cursor: pointer; font-weight: 700; letter-spacing: .3px; transition: all .15s; border: 1px solid; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+.btn-sm { padding: 6px 14px; font-size: 12px; }
+.btn-sage { background: var(--sage); color: white; border-color: var(--sage); }
+.btn-sage:hover { background: #6a8e77; }
+.btn-gold { background: var(--gold); color: white; border-color: var(--gold); }
+.btn-gold:hover { background: #b8973e; }
+.btn-outline { background: transparent; color: var(--sage); border-color: var(--sage); }
+.btn-outline:hover { background: var(--sage-pale); }
+.btn-blush { background: var(--blush); color: white; border-color: var(--blush); }
+.btn-blush:hover { background: #c0908b; }
+.btn-ghost { background: transparent; color: var(--text-light); border-color: var(--border); }
+.btn-ghost:hover { color: var(--text-dark); border-color: var(--text-mid); }
+
+/* STATS */
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+.stat-box { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; text-align: center; }
+.stat-num { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 600; color: var(--text-dark); display: block; }
+.stat-label { font-size: 11px; color: var(--text-light); text-transform: uppercase; letter-spacing: .5px; }
+
+/* SHELF */
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 10px; }
+.section-header h2 { font-family: 'Playfair Display', serif; font-size: 22px; }
+.filter-row { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.filter-chip { padding: 6px 16px; border-radius: 20px; font-size: 12px; border: 1px solid var(--border); background: var(--white); color: var(--text-mid); cursor: pointer; font-family: 'Lato', sans-serif; transition: all .15s; }
+.filter-chip.active { background: var(--sage); border-color: var(--sage); color: white; }
+.books-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(192px, 1fr)); gap: 14px; }
+.book-card { background: var(--white); border-radius: 14px; border: 1px solid var(--border); overflow: hidden; transition: transform .15s, box-shadow .15s; }
+.book-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+.book-spine { height: 8px; }
+.book-body { padding: 13px 14px; }
+.book-title { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 600; line-height: 1.3; margin-bottom: 2px; }
+.book-author { font-size: 12px; color: var(--text-light); margin-bottom: 7px; }
+.book-stars { font-size: 13px; }
+.book-genre { font-size: 11px; color: var(--text-light); margin-top: 4px; }
+.book-status { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; padding: 3px 9px; border-radius: 10px; margin-top: 7px; }
+.status-reading { background: var(--sage-pale); color: var(--sage); }
+.status-finished { background: var(--gold-pale); color: var(--gold); }
+.status-want { background: var(--blush-pale); color: var(--blush); }
+.book-actions { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+.action-link { font-size: 11px; padding: 3px 9px; border-radius: 6px; text-decoration: none; cursor: pointer; border: 1px solid; font-family: 'Lato', sans-serif; transition: all .15s; }
+.action-review { color: var(--blush); border-color: var(--blush); background: var(--blush-pale); }
+.action-review:hover { background: var(--blush-light); }
+.action-del { color: var(--text-light); border-color: var(--border); background: transparent; }
+.action-del:hover { color: #c0392b; border-color: #c0392b; }
+.empty-state { text-align: center; padding: 56px 24px; color: var(--text-light); font-family: 'Playfair Display', serif; font-style: italic; font-size: 16px; grid-column: 1/-1; }
+.empty-state span { font-size: 40px; display: block; margin-bottom: 14px; }
+
+/* FORM */
+.form-card { background: var(--white); border-radius: 16px; padding: 24px 26px; border: 1px solid var(--border); margin-bottom: 20px; }
+.form-card h2 { font-family: 'Playfair Display', serif; font-size: 20px; margin-bottom: 18px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group.full { grid-column: 1/-1; }
+.form-group label { font-size: 11px; font-weight: 700; letter-spacing: .7px; text-transform: uppercase; color: var(--text-light); }
+.form-group input, .form-group select, .form-group textarea { padding: 9px 13px; border: 1px solid var(--border); border-radius: 9px; font-family: 'Lato', sans-serif; font-size: 14px; background: var(--cream); color: var(--text-dark); transition: border-color .15s; }
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--sage); }
+.form-group textarea { resize: vertical; min-height: 90px; }
+.star-row { display: flex; gap: 6px; align-items: center; margin-top: 3px; }
+.star { font-size: 24px; cursor: pointer; color: var(--cream-dark); transition: color .1s; user-select: none; }
+.star.lit { color: var(--gold); }
+.form-actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+.color-picker-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 3px; }
+.color-dot { width: 26px; height: 26px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform .15s; }
+.color-dot.selected { border-color: var(--text-dark); transform: scale(1.2); }
+
+/* GOAL */
+.goal-card { background: var(--white); border-radius: 16px; padding: 22px 26px; border: 1px solid var(--border); margin-bottom: 20px; display: flex; align-items: center; gap: 22px; }
+.goal-ring { position: relative; width: 88px; height: 88px; flex-shrink: 0; }
+.goal-ring svg { transform: rotate(-90deg); }
+.goal-ring-label { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; }
+.goal-ring-label .num { font-size: 22px; font-weight: 600; }
+.goal-ring-label .denom { font-size: 11px; color: var(--text-light); }
+.goal-text { flex: 1; }
+.goal-text h3 { font-family: 'Playfair Display', serif; font-size: 18px; margin-bottom: 4px; }
+.goal-text p { font-size: 13px; color: var(--text-light); }
+.goal-inputs { display: flex; gap: 8px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+.goal-inputs input { width: 68px; padding: 7px 8px; border: 1px solid var(--border); border-radius: 8px; font-family: 'Lato', sans-serif; font-size: 13px; background: var(--cream); text-align: center; }
+
+/* AI RECS */
+.ai-prompt-area { background: var(--sage-pale); border: 1px solid var(--sage-light); border-radius: 16px; padding: 22px 24px; margin-bottom: 22px; }
+.ai-prompt-area h3 { font-family: 'Playfair Display', serif; font-size: 19px; margin-bottom: 6px; color: var(--sage); }
+.ai-prompt-area p { font-size: 13px; color: var(--text-mid); margin-bottom: 16px; line-height: 1.6; }
+.ai-input-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.ai-input-row input { flex: 1; min-width: 200px; padding: 10px 15px; border: 1px solid var(--sage-light); border-radius: 10px; font-family: 'Lato', sans-serif; font-size: 14px; background: var(--white); color: var(--text-dark); }
+.ai-input-row input:focus { outline: none; border-color: var(--sage); }
+.rec-card { background: var(--white); border-radius: 14px; border: 1px solid var(--border); padding: 18px 20px; margin-bottom: 12px; transition: box-shadow .15s; }
+.rec-card:hover { box-shadow: var(--shadow); }
+.rec-badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; padding: 3px 9px; border-radius: 10px; margin-bottom: 8px; }
+.rec-badge.mine { background: var(--sage-pale); color: var(--sage); }
+.rec-badge.similar { background: var(--blush-pale); color: var(--blush); }
+.rec-title { font-family: 'Playfair Display', serif; font-size: 17px; margin-bottom: 3px; }
+.rec-author { font-size: 13px; color: var(--text-light); margin-bottom: 8px; }
+.rec-reason { font-size: 13px; color: var(--text-mid); line-height: 1.6; }
+.rec-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.ai-loading { display: flex; align-items: center; gap: 10px; padding: 24px; color: var(--text-light); font-family: 'Playfair Display', serif; font-style: italic; }
+.spinner { width: 18px; height: 18px; border: 2px solid var(--sage-light); border-top-color: var(--sage); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* SHARE MODAL */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(58,48,40,.45); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--white); border-radius: 20px; padding: 30px 32px; max-width: 540px; width: 100%; box-shadow: 0 8px 40px rgba(58,48,40,.18); }
+.modal h2 { font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 6px; }
+.modal p { font-size: 13px; color: var(--text-mid); margin-bottom: 18px; line-height: 1.6; }
+.share-url-box { display: flex; gap: 8px; margin-bottom: 16px; }
+.share-url-box input { flex: 1; padding: 9px 13px; border: 1px solid var(--border); border-radius: 9px; font-family: 'Lato', sans-serif; font-size: 12px; background: var(--cream); color: var(--text-mid); }
+.share-preview { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 18px; }
+.share-preview canvas { display: block; width: 100%; height: auto; }
+.modal-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* SHARE VIEW banner */
+.share-banner { background: linear-gradient(135deg, var(--sage-pale), var(--gold-pale)); border: 1px solid var(--sage-light); border-radius: 14px; padding: 18px 22px; margin-bottom: 20px; display: flex; align-items: center; gap: 14px; }
+.share-banner-text h3 { font-family: 'Playfair Display', serif; font-size: 17px; margin-bottom: 3px; }
+.share-banner-text p { font-size: 13px; color: var(--text-mid); }
+
+/* TOAST */
+.toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(90px); background: var(--text-dark); color: white; padding: 11px 22px; border-radius: 10px; font-size: 13px; font-family: 'Lato', sans-serif; z-index: 9999; transition: transform .3s ease; white-space: nowrap; max-width: 90vw; }
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* CATALOG GRID */
+.catalog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+.catalog-card { background: var(--white); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; transition: transform .15s, box-shadow .15s; }
+.catalog-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.catalog-card-top { height: 6px; background: var(--sage); }
+.catalog-card-body { padding: 14px 15px; }
+.catalog-card-title { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 600; line-height: 1.3; margin-bottom: 3px; }
+.catalog-card-author { font-size: 12px; color: var(--text-light); margin-bottom: 6px; }
+.catalog-card-genre { font-size: 11px; color: var(--sage); font-weight: 700; letter-spacing: .3px; margin-bottom: 8px; }
+.catalog-card-desc { font-size: 12px; color: var(--text-mid); line-height: 1.5; margin-bottom: 10px; }
+.catalog-card-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+@media (max-width:600px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .books-grid { grid-template-columns: repeat(2, 1fr); }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .journal-header h1 { font-size: 28px; }
+  .tab-btn { font-size: 11px; padding: 8px 5px; }
+  .goal-card { flex-direction: column; text-align: center; }
+}
+</style>
+</head>
+<body>
+<div class="journal-wrap" id="main-wrap">
+
+  <div class="journal-header">
+    <div class="brand-tag">RLB Designs</div>
+    <h1>My Reading <span>Journal</span></h1>
+    <p>Track your reads, discover your next favorite story, and share your thoughts.</p>
+  </div>
+
+  <!-- Share view banner (shown only in shared mode) -->
+  <div class="share-banner" id="share-banner" style="display:none">
+    <span style="font-size:36px">📚</span>
+    <div class="share-banner-text">
+      <h3 id="share-banner-name">Someone's Reading List</h3>
+      <p>This is a shared reading journal — <a href="javascript:void(0)" onclick="clearShareMode()" style="color:var(--sage)">start your own</a> or <a href="https://rlbdesigns.com" target="_blank" style="color:var(--sage)">visit RLB Designs</a> for great book picks.</p>
+    </div>
+  </div>
+
+  <!-- API Key notice -->
+  <div class="notice-bar gold" id="api-notice">
+    <div style="flex:1">
+      <strong class="gold">✨ Enable AI-Powered Recommendations</strong>
+      Enter your Anthropic API key to get personalized book recommendations powered by Claude. Your key is stored only in your browser.
+      <div class="input-row">
+        <input type="password" id="api-key-input" placeholder="sk-ant-…" autocomplete="off">
+        <button class="btn btn-sm btn-gold" onclick="saveApiKey()">Save Key</button>
+        <button class="btn btn-sm btn-ghost" onclick="dismissNotice('api-notice')">Skip</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs" id="main-tabs">
+    <button class="tab-btn active" onclick="switchTab('shelf')">📚 My Shelf</button>
+    <button class="tab-btn" onclick="switchTab('add')">＋ Log a Book</button>
+    <button class="tab-btn" onclick="switchTab('goals')">🎯 Goals</button>
+    <button class="tab-btn" onclick="switchTab('recs')">✨ Recommendations</button>
+    <button class="tab-btn" onclick="switchTab('catalog')">🏪 RLB Catalog</button>
+  </div>
+
+  <!-- ── SHELF ── -->
+  <div id="panel-shelf" class="panel active">
+    <div class="stats-row" id="stats-row"></div>
+    <div class="section-header">
+      <h2>Your Books</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-sm btn-outline" onclick="openShareModal()">🔗 Share My List</button>
+      </div>
+    </div>
+    <div class="filter-row">
+      <button class="filter-chip active" onclick="filterBooks('all',this)">All</button>
+      <button class="filter-chip" onclick="filterBooks('reading',this)">Reading</button>
+      <button class="filter-chip" onclick="filterBooks('finished',this)">Finished</button>
+      <button class="filter-chip" onclick="filterBooks('want',this)">Want to Read</button>
+    </div>
+    <div class="books-grid" id="books-grid"></div>
+  </div>
+
+  <!-- ── ADD BOOK ── -->
+  <div id="panel-add" class="panel">
+    <div class="form-card">
+      <h2>Log a New Book</h2>
+      <div class="form-grid">
+        <div class="form-group"><label>Book Title *</label><input type="text" id="f-title" placeholder="Enter title…"></div>
+        <div class="form-group"><label>Author *</label><input type="text" id="f-author" placeholder="Author name…"></div>
+        <div class="form-group">
+          <label>Genre</label>
+          <select id="f-genre">
+            <option value="">Select genre…</option>
+            <option>Children's Picture Book</option><option>Children's Chapter Book</option>
+            <option>Middle Grade</option><option>Young Adult</option>
+            <option>Fantasy / Adventure</option><option>Science Fiction</option>
+            <option>Romance</option><option>Mystery / Thriller</option>
+            <option>Cookbook / Recipe</option><option>Wellness / Health</option>
+            <option>Self-Help</option><option>Coloring Book</option>
+            <option>Other Non-Fiction</option><option>Other Fiction</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Reading Status</label>
+          <select id="f-status">
+            <option value="want">Want to Read</option>
+            <option value="reading">Currently Reading</option>
+            <option value="finished">Finished</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Your Rating</label><div class="star-row" id="star-row"><span class="star" data-v="1">★</span><span class="star" data-v="2">★</span><span class="star" data-v="3">★</span><span class="star" data-v="4">★</span><span class="star" data-v="5">★</span></div></div>
+        <div class="form-group"><label>Spine Color</label><div class="color-picker-row" id="color-row"></div></div>
+        <div class="form-group full"><label>Your Notes / Review</label><textarea id="f-notes" placeholder="What did you think? Any memorable quotes or moments?"></textarea></div>
+        <div class="form-group"><label>Date Started</label><input type="date" id="f-start"></div>
+        <div class="form-group"><label>Date Finished</label><input type="date" id="f-finish"></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-sage" onclick="addBook()">Save to Journal</button>
+        <button class="btn btn-ghost" onclick="clearForm()">Clear</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── GOALS ── -->
+  <div id="panel-goals" class="panel">
+    <div class="goal-card">
+      <div class="goal-ring">
+        <svg width="88" height="88" viewBox="0 0 88 88">
+          <circle cx="44" cy="44" r="36" fill="none" stroke="#e8dfc8" stroke-width="9"/>
+          <circle id="goal-arc" cx="44" cy="44" r="36" fill="none" stroke="#7a9e87" stroke-width="9"
+            stroke-dasharray="226" stroke-dashoffset="226" stroke-linecap="round"/>
+        </svg>
+        <div class="goal-ring-label">
+          <span class="num" id="goal-done">0</span>
+          <span class="denom" id="goal-of">of 24</span>
+        </div>
+      </div>
+      <div class="goal-text">
+        <h3 id="goal-headline">Set Your Reading Goal</h3>
+        <p id="goal-subline">How many books would you like to read this year?</p>
+        <div class="goal-inputs">
+          <input type="number" id="goal-input" min="1" max="365" placeholder="24">
+          <span style="font-size:13px;color:var(--text-light)">books this year</span>
+          <button class="btn btn-sm btn-sage" onclick="saveGoal()">Set Goal</button>
+        </div>
+      </div>
+    </div>
+    <div class="form-card">
+      <h2>Reading Milestones</h2>
+      <div id="milestones-list" style="display:flex;flex-direction:column;gap:10px;margin-top:6px"></div>
+    </div>
+  </div>
+
+  <!-- ── RECOMMENDATIONS ── -->
+  <div id="panel-recs" class="panel">
+    <div class="ai-prompt-area">
+      <h3>✨ Find Your Next Favorite Book</h3>
+      <p>Tell me what kinds of stories or topics you love — genres, moods, age group you're shopping for, or books you've already adored. I'll suggest RLB Designs titles first, then similar reads you'll love.</p>
+      <div class="ai-input-row">
+        <input type="text" id="rec-input" placeholder="e.g. cozy fantasy for girls ages 8-12, clean eating cookbooks, sci-fi adventures…" onkeydown="if(event.key==='Enter')getAIRecommendations()">
+        <button class="btn btn-gold" onclick="getAIRecommendations()">Find Books →</button>
+      </div>
+    </div>
+    <div id="recs-list"></div>
+  </div>
+
+  <!-- ── RLB CATALOG ── -->
+  <div id="panel-catalog" class="panel">
+    <div class="section-header">
+      <h2>RLB Designs Catalog</h2>
+      <a href="https://rlbdesigns.com" target="_blank" class="btn btn-sm btn-sage">Visit Store →</a>
+    </div>
+    <div id="catalog-status" style="font-size:13px;color:var(--text-light);margin-bottom:14px;font-style:italic"></div>
+    <div class="catalog-grid" id="catalog-grid">
+      <div class="ai-loading"><div class="spinner"></div><em>Loading catalog…</em></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── SHARE MODAL ── -->
+<div class="modal-overlay" id="share-modal">
+  <div class="modal">
+    <h2>🔗 Share My Reading List</h2>
+    <p>Share a beautiful snapshot of your reading journey. Anyone with the link can view your shelf — your personal notes stay private.</p>
+    <div class="share-preview"><canvas id="share-canvas" width="960" height="480"></canvas></div>
+    <div class="share-url-box">
+      <input type="text" id="share-url" readonly>
+      <button class="btn btn-sm btn-sage" onclick="copyShareUrl()">Copy Link</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-gold" onclick="downloadShareCard()">⬇ Download Image</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  CONFIG — UPDATE THESE TWO LINES
+// ═══════════════════════════════════════════════════════
+const REVIEW_FORM_URL = 'https://rlbdesigns.com/book-review';
+const SITE_URL        = 'https://rlbdesigns.com';
+// Catalog JSON URL — host rlb-catalog.json at this path on your site:
+const CATALOG_URL = './rlb-catalog.json';
+// ═══════════════════════════════════════════════════════
+
+const SPINE_COLORS = ['#7a9e87','#d4a5a0','#c9a84c','#8ba3c4','#c4a8d4','#d4c4a8','#a8c4c4','#b8c49a','#3a3028'];
+
+// Built-in fallback catalog (used if JSON fetch fails or for AI prompting)
+const FALLBACK_CATALOG = [
+  { title:"The Enchanted Storyteller's Studio", author:"R.L. Bradford", genre:"Fantasy / Adventure", asin:"", desc:"A 212-page magical writing and creativity journal for young fantasy lovers, ages 8–13.", color:"#c4a8d4" },
+  { title:"The Galactic Storyteller's Studio",  author:"R.L. Bradford", genre:"Science Fiction",    asin:"", desc:"A blueprint-aesthetic sci-fi writing journal for young adventurers who dream of galaxies, ages 8–13.", color:"#8ba3c4" },
+  { title:"Clean Table: Garden-to-Table Recipes", author:"R.L. Bradford", genre:"Cookbook / Recipe", asin:"", desc:"Alpha-Gal safe, dairy-free recipes built around organic whole ingredients for clean eating and cancer recovery.", color:"#7a9e87" },
+  { title:"Zentangle Mandalas: A Coloring Journey", author:"R.L. Bradford", genre:"Coloring Book",  asin:"", desc:"Intricate mandala and zentangle designs for mindful, meditative coloring — teens and adults.", color:"#d4a5a0" },
+  { title:"Meadow Friends Adventures", author:"R.L. Bradford", genre:"Children's Picture Book",      asin:"", desc:"Sweet nature-inspired picture books starring loveable animal characters, ages 4–7.", color:"#c9a84c" },
+];
+
+let books = [], rating = 0, selectedColor = SPINE_COLORS[0], currentFilter = 'all';
+let goalTarget = 24, apiKey = '', liveCatalog = null, shareMode = false;
+
+// ─── INIT ───────────────────────────────────────────────────────
+function load() {
+  try { books = JSON.parse(localStorage.getItem('rlb_journal_books') || '[]'); } catch(e) { books = []; }
+  try { goalTarget = parseInt(localStorage.getItem('rlb_goal') || '24'); } catch(e) { goalTarget = 24; }
+  apiKey = localStorage.getItem('rlb_api_key') || '';
+  if (apiKey) dismissNotice('api-notice');
+  document.getElementById('goal-input').value = goalTarget;
+  initColorPicker(); initStars();
+
+  // Check for shared list in URL
+  const params = new URLSearchParams(location.search);
+  const sharedData = params.get('share');
+  if (sharedData) {
+    loadSharedView(sharedData);
+    return;
+  }
+
+  renderShelf(); renderGoal(); renderMilestones();
+  loadCatalog();
+}
+
+function loadSharedView(encoded) {
+  try {
+    const data = JSON.parse(atob(encoded));
+    shareMode = true;
+    books = data.books || [];
+    goalTarget = data.goal || 24;
+    const banner = document.getElementById('share-banner');
+    banner.style.display = 'flex';
+    document.getElementById('share-banner-name').textContent =
+      (data.name ? data.name + "'s" : "A") + " Reading Journal";
+    // hide add/goals/recs tabs for shared view
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    [1,2,3].forEach(i => { tabBtns[i].style.display = 'none'; });
+    dismissNotice('api-notice');
+    renderShelf(); renderGoal(); renderMilestones(); loadCatalog();
+  } catch(e) {
+    renderShelf(); renderGoal(); renderMilestones(); loadCatalog();
+  }
+}
+function clearShareMode() {
+  window.location.href = window.location.pathname;
+}
+
+// ─── CATALOG ────────────────────────────────────────────────────
+async function loadCatalog() {
+  try {
+    const res = await fetch(CATALOG_URL, { cache: 'no-cache' });
+    if (!res.ok) throw new Error('not found');
+    liveCatalog = await res.json();
+    document.getElementById('catalog-status').textContent =
+      `${liveCatalog.length} titles — last updated from rlbdesigns.com`;
+  } catch(e) {
+    liveCatalog = FALLBACK_CATALOG;
+    document.getElementById('catalog-status').textContent =
+      'Showing built-in catalog. Host rlb-catalog.json on your site for live updates.';
+  }
+  renderCatalog();
+}
+
+function renderCatalog() {
+  const grid = document.getElementById('catalog-grid');
+  if (!liveCatalog || !liveCatalog.length) {
+    grid.innerHTML = '<div class="empty-state"><span>📦</span>No catalog items found.</div>';
+    return;
+  }
+  grid.innerHTML = liveCatalog.map(b => {
+    const amazonLink = b.asin
+      ? `https://www.amazon.com/dp/${b.asin}?tag=rlbdesigns-20`
+      : SITE_URL;
+    return `<div class="catalog-card">
+      <div class="catalog-card-top" style="background:${b.color||'var(--sage)'}"></div>
+      <div class="catalog-card-body">
+        <div class="catalog-card-title">${escHtml(b.title)}</div>
+        <div class="catalog-card-author">by ${escHtml(b.author)}</div>
+        <div class="catalog-card-genre">${escHtml(b.genre)}</div>
+        <div class="catalog-card-desc">${escHtml(b.desc)}</div>
+        <div class="catalog-card-actions">
+          <a class="btn btn-sm btn-sage" href="${amazonLink}" target="_blank">View on Amazon</a>
+          <button class="btn btn-sm btn-outline" onclick="addFromCatalog('${encodeURIComponent(b.title)}','${encodeURIComponent(b.author)}','${encodeURIComponent(b.genre)}','${encodeURIComponent(b.color||'')}')">+ Want to Read</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function addFromCatalog(title, author, genre, color) {
+  const t = decodeURIComponent(title);
+  const a = decodeURIComponent(author);
+  if (books.find(b => b.title === t)) { toast('"' + t + '" is already in your journal!'); return; }
+  books.unshift({ id: Date.now(), title: t, author: a, genre: decodeURIComponent(genre),
+    status: 'want', rating: 0, color: decodeURIComponent(color) || SPINE_COLORS[0],
+    notes:'', start:'', finish:'', added: new Date().toISOString() });
+  saveBooks(); renderShelf(); renderGoal(); renderMilestones();
+  toast('"' + t + '" added to your Want to Read list!');
+}
+
+// ─── API KEY ────────────────────────────────────────────────────
+function saveApiKey() {
+  const v = document.getElementById('api-key-input').value.trim();
+  if (!v.startsWith('sk-ant-')) { toast("That doesn't look like a valid Anthropic key (starts with sk-ant-)."); return; }
+  apiKey = v; localStorage.setItem('rlb_api_key', v);
+  dismissNotice('api-notice');
+  toast('API key saved — AI recommendations are live! ✨');
+}
+function dismissNotice(id) { document.getElementById(id).style.display = 'none'; }
+
+// ─── COLORS & STARS ─────────────────────────────────────────────
+function initColorPicker() {
+  document.getElementById('color-row').innerHTML = SPINE_COLORS.map((c,i) =>
+    `<div class="color-dot${i===0?' selected':''}" style="background:${c}" onclick="selectColor('${c}',this)"></div>`
+  ).join('');
+}
+function selectColor(c, el) {
+  selectedColor = c;
+  document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function initStars() {
+  document.querySelectorAll('.star').forEach(s => {
+    s.onclick = () => { rating = parseInt(s.dataset.v); updateStars(); };
+    s.onmouseenter = () => { const v = parseInt(s.dataset.v); document.querySelectorAll('.star').forEach(x => x.classList.toggle('lit', parseInt(x.dataset.v) <= v)); };
+    s.onmouseleave = updateStars;
+  });
+}
+function updateStars() { document.querySelectorAll('.star').forEach(s => s.classList.toggle('lit', parseInt(s.dataset.v) <= rating)); }
+
+// ─── ADD / DELETE BOOKS ─────────────────────────────────────────
+function addBook() {
+  const title = document.getElementById('f-title').value.trim();
+  const author = document.getElementById('f-author').value.trim();
+  if (!title || !author) { toast('Please enter a title and author.'); return; }
+  books.unshift({ id: Date.now(), title, author, genre: document.getElementById('f-genre').value,
+    status: document.getElementById('f-status').value, rating, color: selectedColor,
+    notes: document.getElementById('f-notes').value.trim(),
+    start: document.getElementById('f-start').value, finish: document.getElementById('f-finish').value,
+    added: new Date().toISOString() });
+  saveBooks(); clearForm(); renderShelf(); renderGoal(); renderMilestones();
+  switchTab('shelf'); toast('"' + title + '" added to your journal!');
+}
+function clearForm() {
+  ['f-title','f-author','f-notes','f-start','f-finish'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-genre').value = ''; document.getElementById('f-status').value = 'want';
+  rating = 0; updateStars(); selectedColor = SPINE_COLORS[0]; initColorPicker();
+}
+function deleteBook(id) {
+  books = books.filter(b => b.id !== id);
+  saveBooks(); renderShelf(); renderGoal(); renderMilestones(); toast('Book removed.');
+}
+function saveBooks() { localStorage.setItem('rlb_journal_books', JSON.stringify(books)); }
+
+// ─── SHELF ──────────────────────────────────────────────────────
+function filterBooks(f, el) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active'); renderShelf();
+}
+function renderShelf() {
+  const fin = books.filter(b => b.status === 'finished').length;
+  const read = books.filter(b => b.status === 'reading').length;
+  const want = books.filter(b => b.status === 'want').length;
+  document.getElementById('stats-row').innerHTML = `
+    <div class="stat-box"><span class="stat-num">${books.length}</span><span class="stat-label">Logged</span></div>
+    <div class="stat-box"><span class="stat-num">${fin}</span><span class="stat-label">Finished</span></div>
+    <div class="stat-box"><span class="stat-num">${read}</span><span class="stat-label">Reading</span></div>
+    <div class="stat-box"><span class="stat-num">${want}</span><span class="stat-label">Want to Read</span></div>`;
+  const filtered = currentFilter === 'all' ? books : books.filter(b => b.status === currentFilter);
+  const grid = document.getElementById('books-grid');
+  if (!filtered.length) { grid.innerHTML = `<div class="empty-state"><span>📖</span>Your shelf is waiting for its first story.</div>`; return; }
+  const sm = { reading:['Currently Reading','status-reading'], finished:['Finished','status-finished'], want:['Want to Read','status-want'] };
+  grid.innerHTML = filtered.map(b => {
+    const stars = b.rating ? '★'.repeat(b.rating)+'☆'.repeat(5-b.rating) : '☆☆☆☆☆';
+    const [sl,sc] = sm[b.status]||['',''];
+    return `<div class="book-card">
+      <div class="book-spine" style="background:${b.color}"></div>
+      <div class="book-body">
+        <div class="book-title">${escHtml(b.title)}</div>
+        <div class="book-author">${escHtml(b.author)}</div>
+        <div class="book-stars" style="color:${b.rating?'#c9a84c':'#ddd5c8'}">${stars}</div>
+        ${b.genre?`<div class="book-genre">${escHtml(b.genre)}</div>`:''}
+        <span class="book-status ${sc}">${sl}</span>
+        <div class="book-actions">
+          ${b.status==='finished'&&!shareMode?`<span class="action-link action-review" onclick="openReview('${encodeURIComponent(b.title)}','${encodeURIComponent(b.author)}')">Write Review</span>`:''}
+          ${!shareMode?`<span class="action-link action-del" onclick="deleteBook(${b.id})">Remove</span>`:''}
+        </div>
+      </div></div>`;
+  }).join('');
+}
+function openReview(t, a) { window.open(`${REVIEW_FORM_URL}?title=${t}&author=${a}`, '_blank'); }
+
+// ─── GOALS ──────────────────────────────────────────────────────
+function renderGoal() {
+  const fin = books.filter(b => b.status === 'finished').length;
+  const pct = Math.min(fin / goalTarget, 1);
+  const circ = 2 * Math.PI * 36;
+  document.getElementById('goal-arc').setAttribute('stroke-dashoffset', (circ - pct * circ).toFixed(1));
+  document.getElementById('goal-done').textContent = fin;
+  document.getElementById('goal-of').textContent = 'of ' + goalTarget;
+  const left = Math.max(0, goalTarget - fin);
+  document.getElementById('goal-headline').textContent = fin >= goalTarget ? '🎉 Goal Achieved!' : left + ' book' + (left!==1?'s':'') + ' to go';
+  document.getElementById('goal-subline').textContent = fin >= goalTarget
+    ? `You've read ${fin} books this year. Remarkable!`
+    : `You've finished ${fin} of your ${goalTarget}-book goal.`;
+}
+function saveGoal() {
+  const v = parseInt(document.getElementById('goal-input').value);
+  if (!v || v < 1) { toast('Please enter a valid number.'); return; }
+  goalTarget = v; localStorage.setItem('rlb_goal', v); renderGoal(); renderMilestones();
+  toast('Goal set: ' + v + ' books this year!');
+}
+function renderMilestones() {
+  const fin = books.filter(b => b.status === 'finished').length;
+  const ms = [{n:1,l:'First page turned',i:'🌱'},{n:5,l:'Five stories in',i:'🌿'},{n:10,l:'Ten tales explored',i:'🌸'},{n:25,l:'Quarter century of reads',i:'🌟'},{n:50,l:'Fifty books — extraordinary',i:'🏆'}];
+  document.getElementById('milestones-list').innerHTML = ms.map(m => {
+    const done = fin >= m.n;
+    return `<div style="display:flex;align-items:center;gap:12px;padding:11px 15px;border-radius:10px;background:${done?'var(--sage-pale)':'var(--cream)'};border:1px solid ${done?'var(--sage-light)':'var(--border)'}">
+      <span style="font-size:22px">${m.i}</span>
+      <div style="flex:1"><div style="font-size:14px;font-weight:${done?700:400};color:${done?'var(--sage)':'var(--text-light)'}">${m.l}</div>
+      <div style="font-size:12px;color:var(--text-light)">${m.n} book${m.n!==1?'s':''}</div></div>
+      ${done?'<span style="color:var(--sage);font-size:20px">✓</span>':''}
+    </div>`;
+  }).join('');
+}
+
+// ─── AI RECOMMENDATIONS ─────────────────────────────────────────
+async function getAIRecommendations() {
+  const query = document.getElementById('rec-input').value.trim();
+  if (!query) { toast('Tell me what you enjoy reading!'); return; }
+  const list = document.getElementById('recs-list');
+  list.innerHTML = `<div class="ai-loading"><div class="spinner"></div><em>Finding books just for you…</em></div>`;
+  if (!apiKey) { list.innerHTML = getFallbackRecs(query); return; }
+
+  const catalog = liveCatalog || FALLBACK_CATALOG;
+  const catalogText = catalog.map((b,i) => `${i+1}. "${b.title}" by ${b.author} — ${b.genre}. ${b.desc}`).join('\n');
+  const loggedGenres = [...new Set(books.filter(b=>b.genre).map(b=>b.genre))].join(', ');
+
+  const prompt = `You are a warm, knowledgeable book curator for RLB Designs, a boutique publishing brand by author R.L. Bradford. The reader says: "${query}"
+${loggedGenres ? `Their reading journal shows these genres: ${loggedGenres}.` : ''}
+
+RLB Designs catalog — ALWAYS recommend 1–3 of these first if they fit at all:
+${catalogText}
+
+Suggest 2–3 RLB Designs books from the catalog above, then 2–3 similar books from other well-known authors.
+
+Respond ONLY with JSON, no markdown fences, no preamble:
+{"rlb":[{"title":"...","author":"R.L. Bradford","reason":"2–3 warm sentences explaining the fit."}],"similar":[{"title":"...","author":"...","reason":"2–3 warm sentences."}]}`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01' },
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, messages:[{role:'user',content:prompt}] })
+    });
+    if (!res.ok) { const e = await res.json(); throw new Error(e.error?.message||'API error'); }
+    const data = await res.json();
+    const text = data.content.find(c=>c.type==='text')?.text||'';
+    const parsed = JSON.parse(text.replace(/```json|```/g,'').trim());
+    renderAIRecs(parsed, query);
+  } catch(e) {
+    console.error(e);
+    if (e.message?.includes('401')) {
+      list.innerHTML = `<div style="padding:20px;color:#c0392b;font-size:14px;">⚠️ Invalid API key. <button class="btn btn-sm btn-outline" style="margin-left:8px" onclick="document.getElementById('api-notice').style.display='flex'">Update Key</button></div>`;
+    } else { list.innerHTML = getFallbackRecs(query); }
+  }
+}
+
+function renderAIRecs(data, query) {
+  const list = document.getElementById('recs-list');
+  let html = `<div style="font-family:'Playfair Display',serif;font-size:14px;color:var(--text-light);margin-bottom:16px;font-style:italic">Personalized picks for: "${escHtml(query)}"</div>`;
+  (data.rlb||[]).forEach(b => {
+    html += `<div class="rec-card"><div class="rec-badge mine">RLB Designs</div>
+      <div class="rec-title">${escHtml(b.title)}</div><div class="rec-author">by ${escHtml(b.author)}</div>
+      <div class="rec-reason">${escHtml(b.reason)}</div>
+      <div class="rec-actions">
+        <button class="btn btn-sm btn-sage" onclick="addFromRec('${encodeURIComponent(b.title)}','${encodeURIComponent(b.author)}','')">+ Add to Journal</button>
+        <a class="btn btn-sm btn-outline" href="${SITE_URL}" target="_blank">View on RLB Designs →</a>
+      </div></div>`;
+  });
+  (data.similar||[]).forEach(b => {
+    html += `<div class="rec-card"><div class="rec-badge similar">You May Also Love</div>
+      <div class="rec-title">${escHtml(b.title)}</div><div class="rec-author">by ${escHtml(b.author)}</div>
+      <div class="rec-reason">${escHtml(b.reason)}</div>
+      <div class="rec-actions">
+        <button class="btn btn-sm btn-outline" onclick="addFromRec('${encodeURIComponent(b.title)}','${encodeURIComponent(b.author)}','')">+ Add to Journal</button>
+      </div></div>`;
+  });
+  list.innerHTML = html;
+}
+
+function getFallbackRecs(query) {
+  const catalog = liveCatalog || FALLBACK_CATALOG;
+  const kw = query.toLowerCase().split(/\s+/).filter(w=>w.length>3);
+  const match = catalog.filter(b => kw.some(w => b.title.toLowerCase().includes(w)||b.genre.toLowerCase().includes(w)||b.desc.toLowerCase().includes(w)));
+  const featured = match.length ? match.slice(0,3) : catalog.slice(0,2);
+  let html = `<div style="font-family:'Playfair Display',serif;font-size:13px;color:var(--text-light);margin-bottom:16px;font-style:italic">Curated picks for: "${escHtml(query)}" — <a href="#" onclick="document.getElementById('api-notice').style.display='flex';return false;" style="color:var(--sage)">add your API key for AI-powered results</a></div>`;
+  featured.forEach(b => {
+    html += `<div class="rec-card"><div class="rec-badge mine">RLB Designs</div>
+      <div class="rec-title">${escHtml(b.title)}</div><div class="rec-author">by ${escHtml(b.author)}</div>
+      <div class="rec-reason">${escHtml(b.desc)}</div>
+      <div class="rec-actions">
+        <button class="btn btn-sm btn-sage" onclick="addFromRec('${encodeURIComponent(b.title)}','${encodeURIComponent(b.author)}','${encodeURIComponent(b.genre)}')">+ Add to Journal</button>
+        <a class="btn btn-sm btn-outline" href="${SITE_URL}" target="_blank">View on RLB Designs →</a>
+      </div></div>`;
+  });
+  return html;
+}
+
+function addFromRec(title, author, genre) {
+  const t = decodeURIComponent(title);
+  books.unshift({ id:Date.now(), title:t, author:decodeURIComponent(author), genre:decodeURIComponent(genre),
+    status:'want', rating:0, color:SPINE_COLORS[Math.floor(Math.random()*SPINE_COLORS.length)],
+    notes:'', start:'', finish:'', added:new Date().toISOString() });
+  saveBooks(); renderShelf(); renderGoal(); renderMilestones();
+  toast('Added "' + t + '" to your Want to Read list!');
+}
+
+// ─── SHARE ──────────────────────────────────────────────────────
+function openShareModal() {
+  if (!books.length) { toast('Add some books to your journal first!'); return; }
+  drawShareCard();
+  buildShareUrl();
+  document.getElementById('share-modal').classList.add('open');
+}
+function closeModal() { document.getElementById('share-modal').classList.remove('open'); }
+
+function buildShareUrl() {
+  const publicBooks = books.map(b => ({
+    title: b.title, author: b.author, genre: b.genre,
+    status: b.status, rating: b.rating, color: b.color
+    // notes deliberately excluded for privacy
+  }));
+  const payload = { books: publicBooks, goal: goalTarget, ts: Date.now() };
+  const encoded = btoa(JSON.stringify(payload));
+  const url = `${window.location.origin}${window.location.pathname}?share=${encoded}`;
+  document.getElementById('share-url').value = url;
+}
+
+function copyShareUrl() {
+  const input = document.getElementById('share-url');
+  input.select(); input.setSelectionRange(0,9999);
+  try { document.execCommand('copy'); } catch(e) { navigator.clipboard?.writeText(input.value); }
+  toast('Link copied to clipboard! ✓');
+}
+
+function drawShareCard() {
+  const canvas = document.getElementById('share-canvas');
+  const ctx = canvas.getContext('2d');
+  const W = 960, H = 480;
+  canvas.width = W; canvas.height = H;
+
+  // Background
+  ctx.fillStyle = '#f5f0e8';
+  ctx.fillRect(0, 0, W, H);
+
+  // Top stripe
+  ctx.fillStyle = '#7a9e87';
+  ctx.fillRect(0, 0, W, 8);
+
+  // Decorative dots
+  ctx.fillStyle = '#e8dfc8';
+  for (let x = 0; x < W; x += 28) { ctx.beginPath(); ctx.arc(x, H/2, 1.5, 0, Math.PI*2); ctx.fill(); }
+
+  // Brand tag pill
+  ctx.fillStyle = '#faf5e6';
+  ctx.strokeStyle = '#c9a84c';
+  ctx.lineWidth = 1.5;
+  roundRect(ctx, 36, 30, 130, 28, 14);
+  ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#c9a84c';
+  ctx.font = '700 11px Lato, Arial';
+  ctx.letterSpacing = '2px';
+  ctx.fillText('RLB DESIGNS', 54, 49);
+
+  // Headline
+  ctx.fillStyle = '#3a3028';
+  ctx.font = '600 38px Georgia, serif';
+  ctx.fillText('My Reading Journal', 36, 108);
+
+  // Stats
+  const fin = books.filter(b=>b.status==='finished').length;
+  const read = books.filter(b=>b.status==='reading').length;
+  const stats = [
+    { n: books.length, l: 'Logged' },
+    { n: fin, l: 'Finished' },
+    { n: read, l: 'Reading' },
+    { n: goalTarget, l: 'Goal' },
+  ];
+  stats.forEach((s,i) => {
+    const x = 36 + i * 115;
+    ctx.fillStyle = '#ffffff';
+    ctx.strokeStyle = '#ddd5c8';
+    ctx.lineWidth = 1;
+    roundRect(ctx, x, 126, 100, 58, 10);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#3a3028';
+    ctx.font = '700 24px Georgia, serif';
+    ctx.fillText(String(s.n), x + 14, 158);
+    ctx.fillStyle = '#9a8e82';
+    ctx.font = '400 11px Lato, Arial';
+    ctx.fillText(s.l.toUpperCase(), x + 14, 175);
+  });
+
+  // Book spines
+  const shelfBooks = books.slice(0, 14);
+  const spineW = 46, spineH = 180, spineY = 215, spineStartX = 36;
+  // shelf line
+  ctx.fillStyle = '#c9a84c';
+  ctx.fillRect(spineStartX - 4, spineY + spineH, shelfBooks.length * (spineW + 6) + 8, 4);
+
+  shelfBooks.forEach((b, i) => {
+    const sx = spineStartX + i * (spineW + 6);
+    // shadow
+    ctx.fillStyle = 'rgba(58,48,40,0.08)';
+    roundRect(ctx, sx+3, spineY+3, spineW, spineH, 4);
+    ctx.fill();
+    // spine
+    ctx.fillStyle = b.color || '#7a9e87';
+    roundRect(ctx, sx, spineY, spineW, spineH, 4);
+    ctx.fill();
+    // title text rotated
+    ctx.save();
+    ctx.translate(sx + spineW/2, spineY + spineH - 14);
+    ctx.rotate(-Math.PI/2);
+    ctx.fillStyle = 'rgba(255,255,255,0.92)';
+    ctx.font = '600 11px Lato, Arial';
+    const maxW = spineH - 20;
+    const txt = b.title.length > 22 ? b.title.slice(0,22)+'…' : b.title;
+    ctx.fillText(txt, 0, 0, maxW);
+    ctx.restore();
+    // rating dots
+    if (b.rating) {
+      for (let r=0; r<b.rating; r++) {
+        ctx.fillStyle = 'rgba(255,255,255,0.7)';
+        ctx.beginPath();
+        ctx.arc(sx + 6 + r*7, spineY + 12, 3, 0, Math.PI*2);
+        ctx.fill();
+      }
+    }
+  });
+
+  if (books.length > 14) {
+    ctx.fillStyle = '#9a8e82';
+    ctx.font = 'italic 13px Georgia, serif';
+    ctx.fillText(`+ ${books.length - 14} more`, spineStartX + 14*(spineW+6) + 8, spineY + spineH/2);
+  }
+
+  // Footer
+  ctx.fillStyle = '#9a8e82';
+  ctx.font = '12px Lato, Arial';
+  ctx.fillText('rlbdesigns.com', W - 150, H - 22);
+  ctx.fillStyle = '#c9a84c';
+  ctx.beginPath(); ctx.arc(W-160, H-28, 3, 0, Math.PI*2); ctx.fill();
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.lineTo(x+w-r, y); ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+  ctx.lineTo(x+w, y+h-r); ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+  ctx.lineTo(x+r, y+h); ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+  ctx.lineTo(x, y+r); ctx.quadraticCurveTo(x, y, x+r, y);
+  ctx.closePath();
+}
+
+function downloadShareCard() {
+  const canvas = document.getElementById('share-canvas');
+  const a = document.createElement('a');
+  a.download = 'my-reading-journal.png';
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+  toast('Image downloaded!');
+}
+
+// ─── NAV & UTILS ────────────────────────────────────────────────
+const TAB_MAP = {shelf:0, add:1, goals:2, recs:3, catalog:4};
+function switchTab(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  document.querySelectorAll('.tab-btn')[TAB_MAP[id]].classList.add('active');
+  if (id === 'catalog' && !liveCatalog) loadCatalog();
+}
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Close modal on overlay click
+document.getElementById('share-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+
+load();
+</script>
+</body>
+</html>
