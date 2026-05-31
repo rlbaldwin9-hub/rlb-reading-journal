@@ -205,50 +205,7 @@ body { font-family: 'Lato', sans-serif; background: var(--cream); color: var(--t
     </div>
   </div>
 
-  <!-- API Key notice -->
-  <div class="notice-bar gold" id="api-notice">
-    <div style="flex:1">
-      <strong class="gold">✨ Enable AI-Powered Book Recommendations — It's Free!</strong>
-      This journal uses Claude AI to give you personalized book picks based on what you love to read. To turn it on, you just need a free API key from Anthropic (the company that makes Claude). It takes about 2 minutes and costs nothing.
-      <br><br>
-      <span id="toggle-instructions" style="cursor:pointer;color:var(--gold);font-weight:700;font-size:13px;text-decoration:underline;text-underline-offset:2px;" onclick="toggleApiInstructions()">▶ Show me how to get my free key</span>
 
-      <div id="api-instructions" style="display:none;margin-top:14px;background:#fffdf5;border:1px solid var(--gold-light);border-radius:10px;padding:16px 18px;">
-        <div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--text-dark);margin-bottom:10px;">How to get your free Anthropic API key</div>
-        <ol style="padding-left:18px;display:flex;flex-direction:column;gap:10px;font-size:13px;color:var(--text-mid);line-height:1.6;">
-          <li>
-            <strong style="color:var(--text-dark)">Go to the Anthropic Console</strong><br>
-            Open a new browser tab and visit <a href="https://console.anthropic.com" target="_blank" style="color:var(--gold);font-weight:700;">console.anthropic.com</a>
-          </li>
-          <li>
-            <strong style="color:var(--text-dark)">Create a free account</strong><br>
-            Click <em>"Sign up"</em> and register with your email address. No credit card is required to get started — Anthropic includes free credits when you create a new account.
-          </li>
-          <li>
-            <strong style="color:var(--text-dark)">Go to API Keys</strong><br>
-            Once you're logged in, click your name or the menu in the top-right corner, then select <em>"API Keys"</em> from the sidebar.
-          </li>
-          <li>
-            <strong style="color:var(--text-dark)">Create a new key</strong><br>
-            Click <em>"Create Key"</em>, give it a name like <em>"Reading Journal"</em>, then click <em>"Create Key"</em> again. Your key will appear on screen — it starts with <code style="background:var(--cream-dark);padding:1px 5px;border-radius:4px;font-size:12px;">sk-ant-</code>
-          </li>
-          <li>
-            <strong style="color:var(--text-dark)">Copy &amp; paste it below</strong><br>
-            Copy the key (the whole thing), paste it into the box below, and click <em>"Save Key"</em>. That's it!
-          </li>
-        </ol>
-        <div style="margin-top:12px;padding:10px 14px;background:var(--sage-pale);border-radius:8px;font-size:12px;color:var(--text-mid);line-height:1.5;">
-          🔒 <strong style="color:var(--sage)">Your privacy:</strong> Your API key is saved only in <em>your</em> browser on <em>your</em> device. It is never sent to this website or stored anywhere online. Only you have it.
-        </div>
-      </div>
-
-      <div class="input-row" style="margin-top:14px;">
-        <input type="password" id="api-key-input" placeholder="Paste your key here — starts with sk-ant-…" autocomplete="off">
-        <button class="btn btn-sm btn-gold" onclick="saveApiKey()">Save Key</button>
-        <button class="btn btn-sm btn-ghost" onclick="dismissNotice('api-notice')">Skip for now</button>
-      </div>
-    </div>
-  </div>
 
   <div class="tabs" id="main-tabs">
     <button class="tab-btn active" onclick="switchTab('shelf')">📚 My Shelf</button>
@@ -353,8 +310,8 @@ body { font-family: 'Lato', sans-serif; background: var(--cream); color: var(--t
       <h3>✨ Find Your Next Favorite Book</h3>
       <p>Tell me what kinds of stories or topics you love — genres, moods, age group you're shopping for, or books you've already adored. I'll suggest RLB Designs titles first, then similar reads you'll love.</p>
       <div class="ai-input-row">
-        <input type="text" id="rec-input" placeholder="e.g. cozy fantasy for girls ages 8-12, clean eating cookbooks, sci-fi adventures…" onkeydown="if(event.key==='Enter')getAIRecommendations()">
-        <button class="btn btn-gold" onclick="getAIRecommendations()">Find Books →</button>
+        <input type="text" id="rec-input" placeholder="e.g. funny picture books for kids, easy alpha-gal recipes, relaxing coloring books…" onkeydown="if(event.key==='Enter')findRecommendations()">
+        <button class="btn btn-gold" onclick="findRecommendations()">Find Books →</button>
       </div>
     </div>
     <div id="recs-list"></div>
@@ -428,7 +385,7 @@ const FALLBACK_CATALOG = [
 ];
 
 let books = [], rating = 0, selectedColor = SPINE_COLORS[0], currentFilter = 'all';
-let goalTarget = 24, apiKey = '', liveCatalog = null, shareMode = false;
+let goalTarget = 24, liveCatalog = null, shareMode = false;
 
 // ─── INIT ───────────────────────────────────────────────────────
 function saveCatalogName(name) {
@@ -439,13 +396,11 @@ function saveCatalogName(name) {
 function load() {
   try { books = JSON.parse(localStorage.getItem('rlb_journal_books') || '[]'); } catch(e) { books = []; }
   try { goalTarget = parseInt(localStorage.getItem('rlb_goal') || '24'); } catch(e) { goalTarget = 24; }
-  apiKey = localStorage.getItem('rlb_api_key') || '';
   const savedCatalogName = localStorage.getItem('rlb_catalog_name') || '';
   if (savedCatalogName) {
     document.getElementById('catalog-heading').textContent = savedCatalogName;
     document.getElementById('catalog-name-input').value = savedCatalogName;
   }
-  if (apiKey) dismissNotice('api-notice');
   document.getElementById('goal-input').value = goalTarget;
   initColorPicker(); initStars();
 
@@ -474,7 +429,6 @@ function loadSharedView(encoded) {
     // hide add/goals/recs tabs for shared view
     const tabBtns = document.querySelectorAll('.tab-btn');
     [1,2,3].forEach(i => { tabBtns[i].style.display = 'none'; });
-    dismissNotice('api-notice');
     renderShelf(); renderGoal(); renderMilestones(); loadCatalog();
   } catch(e) {
     renderShelf(); renderGoal(); renderMilestones(); loadCatalog();
@@ -536,21 +490,7 @@ function addFromCatalog(title, author, genre, color) {
 }
 
 // ─── API KEY ────────────────────────────────────────────────────
-function toggleApiInstructions() {
-  const box = document.getElementById('api-instructions');
-  const toggle = document.getElementById('toggle-instructions');
-  const open = box.style.display === 'none';
-  box.style.display = open ? 'block' : 'none';
-  toggle.textContent = open ? '▼ Hide instructions' : '▶ Show me how to get my free key';
-}
 
-function saveApiKey() {
-  const v = document.getElementById('api-key-input').value.trim();
-  if (!v.startsWith('sk-ant-')) { toast("That doesn't look like a valid Anthropic key (starts with sk-ant-)."); return; }
-  apiKey = v; localStorage.setItem('rlb_api_key', v);
-  dismissNotice('api-notice');
-  toast('API key saved — AI recommendations are live! ✨');
-}
 function dismissNotice(id) { document.getElementById(id).style.display = 'none'; }
 
 // ─── COLORS & STARS ─────────────────────────────────────────────
@@ -670,87 +610,234 @@ function renderMilestones() {
   }).join('');
 }
 
-// ─── AI RECOMMENDATIONS ─────────────────────────────────────────
-async function getAIRecommendations() {
-  const query = document.getElementById('rec-input').value.trim();
-  if (!query) { toast('Tell me what you enjoy reading!'); return; }
-  const list = document.getElementById('recs-list');
-  list.innerHTML = `<div class="ai-loading"><div class="spinner"></div><em>Finding books just for you…</em></div>`;
-  if (!apiKey) { list.innerHTML = getFallbackRecs(query); return; }
+// ─── SMART RECOMMENDATIONS (no API key needed) ──────────────────
+// Keyword→tag synonym map so "funny" matches "humor", etc.
+const SYNONYMS = {
+  'funny':'humor,comedy,silly,laugh', 'humor':'funny,comedy,silly',
+  'kid':'children,picture book,ages 4-8,young', 'kids':'children,picture book,ages 4-8',
+  'child':'children,picture book,ages 4-8', 'children':'picture book,ages 4-8,kids',
+  'baby':'ages 0-3,toddler,board book', 'toddler':'ages 0-3,baby,board book',
+  'young':'children,picture book,middle grade', 'boy':'boys,adventure,science fiction',
+  'girl':'girls,fantasy,friendship', 'teen':'young adult,middle grade,tween',
+  'adult':'adults,all ages', 'cook':'cookbook,recipe,cooking,food',
+  'recipe':'cookbook,cooking,food,ingredients', 'food':'cookbook,recipe,cooking,eating',
+  'eat':'cookbook,recipe,eating,food', 'allerg':'alpha-gal,dairy-free,mammal-free',
+  'alpha':'alpha-gal,mammal-free,dairy-free,ags',
+  'gluten':'gluten-free,dairy-free,clean eating',
+  'vegan':'plant-based,dairy-free,mammal-free,vegan options',
+  'dairy':'dairy-free,alpha-gal,mammal-free',
+  'clean':'clean eating,wellness,organic,garden',
+  'health':'wellness,clean eating,recovery,nutrition',
+  'cancer':'cancer recovery,wellness,clean eating,chronic illness',
+  'chronic':'chronic illness,fatigue,wellness',
+  'color':'coloring book,mandala,zentangle,art',
+  'colour':'coloring book,mandala,zentangle,art',
+  'mandala':'coloring book,zentangle,mindfulness',
+  'relax':'relaxation,mindfulness,coloring book,calm',
+  'calm':'relaxation,mindfulness,meditation,coloring book',
+  'stress':'relaxation,mindfulness,coloring book,calm',
+  'meditat':'mindfulness,meditation,relaxation,zen',
+  'journal':'journal,gratitude,planner,daily practice',
+  'gratitude':'journal,gratitude,mindfulness,self-care',
+  'friend':'friendship,honesty,kindness,social skills',
+  'feel':'emotions,feelings,empathy,social skills',
+  'emotion':'emotions,feelings,empathy,growth mindset',
+  'brave':'bravery,courage,confidence,shyness',
+  'shy':'shyness,bravery,confidence,social skills',
+  'honest':'honesty,conflict resolution,friendship',
+  'resil':'resilience,growth mindset,perfectionism',
+  'perfect':'perfectionism,resilience,growth mindset',
+  'anxiet':'anxiety,emotions,worry,feelings',
+  'worry':'anxiety,emotions,worry,feelings',
+  'adventure':'adventure,fantasy,science fiction,action',
+  'fantasy':'fantasy,adventure,magic,imagination',
+  'scifi':'science fiction,adventure,space',
+  'sci-fi':'science fiction,adventure,space',
+  'space':'science fiction,adventure,exploration',
+  'cozy':'cozy,hygge,relaxation,comfort',
+  'hygge':'cozy,hygge,relaxation,interior',
+  'christmas':'christmas,holiday,winter,festive',
+  'holiday':'christmas,holiday,seasonal,festive',
+  'winter':'winter,christmas,holiday,cold',
+  'gift':'gift,children,picture book,coloring book',
+};
 
-  const catalog = liveCatalog || FALLBACK_CATALOG;
-  const catalogText = catalog.map((b,i) => `${i+1}. "${b.title}" by ${b.author} — ${b.genre}. ${b.desc}`).join('\n');
-  const loggedGenres = [...new Set(books.filter(b=>b.genre).map(b=>b.genre))].join(', ');
+// Open Library genre → subject query map
+const OL_SUBJECTS = {
+  "Children's Picture Book": 'picture+books&age=juvenile',
+  "Children's Chapter Book": 'juvenile+fiction&age=juvenile',
+  "Middle Grade":            'middle+grade+fiction',
+  "Young Adult":             'young+adult+fiction',
+  "Cookbook / Recipe":       'cooking',
+  "Wellness / Health":       'health+wellness',
+  "Coloring Book":           'coloring+books',
+  "Journal / Planner":       'journals+diaries',
+  "Fantasy / Adventure":     'fantasy+fiction',
+  "Science Fiction":         'science+fiction',
+  "Romance":                 'romance+fiction',
+  "Mystery / Thriller":      'mystery+fiction',
+  "Self-Help":               'self+help',
+};
 
-  const prompt = `You are a warm, knowledgeable book curator for RLB Designs, a boutique publishing brand by author R.L. Bradford. The reader says: "${query}"
-${loggedGenres ? `Their reading journal shows these genres: ${loggedGenres}.` : ''}
+// Score a catalog book against the query tokens
+function scoreBook(book, tokens) {
+  let score = 0;
+  const searchable = [
+    book.title, book.author, book.genre,
+    book.desc, book.series || '',
+    (book.tags || []).join(' ')
+  ].join(' ').toLowerCase();
 
-RLB Designs catalog — ALWAYS recommend 1–3 of these first if they fit at all:
-${catalogText}
+  tokens.forEach(tok => {
+    if (searchable.includes(tok)) score += 3;
+    // expand via synonyms
+    const syns = (SYNONYMS[tok] || '').split(',').filter(Boolean);
+    syns.forEach(s => { if (searchable.includes(s)) score += 1; });
+  });
 
-Suggest 2–3 RLB Designs books from the catalog above, then 2–3 similar books from other well-known authors.
+  // Bonus: if reader's logged genres match this book's genre
+  const loggedGenres = books.map(b => b.genre?.toLowerCase() || '');
+  if (loggedGenres.includes(book.genre?.toLowerCase())) score += 2;
 
-Respond ONLY with JSON, no markdown fences, no preamble:
-{"rlb":[{"title":"...","author":"R.L. Bradford","reason":"2–3 warm sentences explaining the fit."}],"similar":[{"title":"...","author":"...","reason":"2–3 warm sentences."}]}`;
+  return score;
+}
 
+// Tokenise query string
+function tokenise(q) {
+  return q.toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .split(/\s+/)
+    .filter(w => w.length > 2);
+}
+
+// Friendly explanation why a catalog book was recommended
+function buildReason(book, tokens) {
+  const reasons = [];
+  const tl = book.title.toLowerCase();
+  const genres = book.genre?.toLowerCase() || '';
+  const tags = (book.tags || []).map(t => t.toLowerCase());
+
+  if (tokens.some(t => ['cook','recipe','food','eat','meal'].some(k => t.includes(k))))
+    reasons.push('perfect for food lovers and home cooks');
+  if (tokens.some(t => ['alpha','gal','allerg','dairy','mammal','gluten'].some(k => t.includes(k))))
+    reasons.push('100% Alpha-Gal safe and mammal-free');
+  if (tokens.some(t => ['health','clean','wellness','cancer','chronic'].some(k => t.includes(k))))
+    reasons.push('focused on clean, nourishing eating for wellbeing');
+  if (tags.includes('children') || tags.includes('picture book'))
+    reasons.push('a wonderful choice for young readers');
+  if (tags.includes('resilience') || tags.includes('growth mindset'))
+    reasons.push('builds emotional resilience and a growth mindset');
+  if (tags.includes('emotions') || tags.includes('feelings'))
+    reasons.push('helps children understand and express big feelings');
+  if (tags.includes('friendship') || tags.includes('honesty'))
+    reasons.push('teaches the value of friendship and honesty');
+  if (tags.includes('coloring book') || tags.includes('mandala'))
+    reasons.push('a relaxing creative escape for all skill levels');
+  if (tags.includes('mindfulness') || tags.includes('relaxation'))
+    reasons.push('great for stress relief and mindful moments');
+  if (tags.includes('gratitude') || tags.includes('journal'))
+    reasons.push('supports a daily gratitude and self-care practice');
+  if (tags.includes('christmas') || tags.includes('holiday'))
+    reasons.push('a lovely seasonal gift or personal treat');
+
+  if (!reasons.length) reasons.push('a great match for what you described');
+  return book.desc + ' ' + reasons.slice(0, 2).map((r,i) => i===0 ? 'This is ' + r + '.' : 'It's also ' + r + '.').join(' ');
+}
+
+// Fetch similar books from Open Library (free, no key)
+async function fetchOpenLibrary(genre, excludeTitles) {
+  const subject = OL_SUBJECTS[genre] || 'fiction';
+  const url = `https://openlibrary.org/search.json?subject=${subject}&limit=10&fields=title,author_name,subject,first_sentence`;
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01' },
-      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, messages:[{role:'user',content:prompt}] })
-    });
-    if (!res.ok) { const e = await res.json(); throw new Error(e.error?.message||'API error'); }
+    const res = await fetch(url);
+    if (!res.ok) return [];
     const data = await res.json();
-    const text = data.content.find(c=>c.type==='text')?.text||'';
-    const parsed = JSON.parse(text.replace(/```json|```/g,'').trim());
-    renderAIRecs(parsed, query);
+    const excl = excludeTitles.map(t => t.toLowerCase());
+    return (data.docs || [])
+      .filter(d => d.title && d.author_name && !excl.includes(d.title.toLowerCase()))
+      .slice(0, 3)
+      .map(d => ({
+        title: d.title,
+        author: d.author_name[0] || 'Unknown',
+        reason: d.first_sentence?.[0]
+          ? d.first_sentence[0].slice(0, 120) + (d.first_sentence[0].length > 120 ? '…' : '')
+          : 'A well-regarded title in this genre you might enjoy.'
+      }));
   } catch(e) {
-    console.error(e);
-    if (e.message?.includes('401')) {
-      list.innerHTML = `<div style="padding:20px;color:#c0392b;font-size:14px;">⚠️ Invalid API key. <button class="btn btn-sm btn-outline" style="margin-left:8px" onclick="document.getElementById('api-notice').style.display='flex'">Update Key</button></div>`;
-    } else { list.innerHTML = getFallbackRecs(query); }
+    return [];
   }
 }
 
-function renderAIRecs(data, query) {
-  const list = document.getElementById('recs-list');
-  let html = `<div style="font-family:'Playfair Display',serif;font-size:14px;color:var(--text-light);margin-bottom:16px;font-style:italic">Personalized picks for: "${escHtml(query)}"</div>`;
-  (data.rlb||[]).forEach(b => {
-    html += `<div class="rec-card"><div class="rec-badge mine">RLB Designs</div>
-      <div class="rec-title">${escHtml(b.title)}</div><div class="rec-author">by ${escHtml(b.author)}</div>
-      <div class="rec-reason">${escHtml(b.reason)}</div>
-      <div class="rec-actions">
-        <button class="btn btn-sm btn-sage" onclick="addFromRec('${encodeURIComponent(b.title)}','${encodeURIComponent(b.author)}','')">+ Add to Journal</button>
-        <a class="btn btn-sm btn-outline" href="${SITE_URL}" target="_blank">View on RLB Designs →</a>
-      </div></div>`;
-  });
-  (data.similar||[]).forEach(b => {
-    html += `<div class="rec-card"><div class="rec-badge similar">You May Also Love</div>
-      <div class="rec-title">${escHtml(b.title)}</div><div class="rec-author">by ${escHtml(b.author)}</div>
-      <div class="rec-reason">${escHtml(b.reason)}</div>
-      <div class="rec-actions">
-        <button class="btn btn-sm btn-outline" onclick="addFromRec('${encodeURIComponent(b.title)}','${encodeURIComponent(b.author)}','')">+ Add to Journal</button>
-      </div></div>`;
-  });
-  list.innerHTML = html;
-}
+async function findRecommendations() {
+  const query = document.getElementById('rec-input').value.trim();
+  if (!query) { toast('Tell me what you enjoy reading!'); return; }
 
-function getFallbackRecs(query) {
+  const list = document.getElementById('recs-list');
+  list.innerHTML = `<div class="ai-loading"><div class="spinner"></div><em>Finding books just for you…</em></div>`;
+
   const catalog = liveCatalog || FALLBACK_CATALOG;
-  const kw = query.toLowerCase().split(/\s+/).filter(w=>w.length>3);
-  const match = catalog.filter(b => kw.some(w => b.title.toLowerCase().includes(w)||b.genre.toLowerCase().includes(w)||b.desc.toLowerCase().includes(w)));
-  const featured = match.length ? match.slice(0,3) : catalog.slice(0,2);
-  let html = `<div style="font-family:'Playfair Display',serif;font-size:13px;color:var(--text-light);margin-bottom:16px;font-style:italic">Curated picks for: "${escHtml(query)}" — <a href="#" onclick="document.getElementById('api-notice').style.display='flex';return false;" style="color:var(--sage)">add your API key for AI-powered results</a></div>`;
+  const tokens = tokenise(query);
+
+  // Score and rank catalog books
+  const scored = catalog
+    .map(b => ({ ...b, _score: scoreBook(b, tokens) }))
+    .sort((a, b) => b._score - a._score);
+
+  // Top matches (score > 0), fallback to top 3 if nothing scores
+  const myPicks = scored.filter(b => b._score > 0).slice(0, 3);
+  const featured = myPicks.length ? myPicks : scored.slice(0, 2);
+
+  // Best genre match for Open Library
+  const topGenre = featured[0]?.genre || "Children's Picture Book";
+  const excludeTitles = featured.map(b => b.title);
+
+  // Fetch Open Library suggestions in parallel
+  const similar = await fetchOpenLibrary(topGenre, excludeTitles);
+
+  // Render
+  let html = `<div style="font-family:'Playfair Display',serif;font-size:14px;color:var(--text-light);margin-bottom:18px;font-style:italic">
+    Showing picks for: <strong style="color:var(--text-dark)">"${escHtml(query)}"</strong>
+  </div>`;
+
   featured.forEach(b => {
-    html += `<div class="rec-card"><div class="rec-badge mine">RLB Designs</div>
-      <div class="rec-title">${escHtml(b.title)}</div><div class="rec-author">by ${escHtml(b.author)}</div>
-      <div class="rec-reason">${escHtml(b.desc)}</div>
+    const amazonLink = b.asin
+      ? `https://www.amazon.com/dp/${b.asin}`
+      : 'https://www.amazon.com/stores/Rachel-Baldwin/author/B0FGJZ6FRF';
+    html += `<div class="rec-card">
+      <div class="rec-badge mine">✦ My Catalog</div>
+      <div class="rec-title">${escHtml(b.title)}</div>
+      <div class="rec-author">by ${escHtml(b.author)}${b.series ? ` <span style="color:var(--text-light);font-size:12px">· ${escHtml(b.series)}</span>` : ''}</div>
+      <div class="rec-reason">${escHtml(buildReason(b, tokens))}</div>
       <div class="rec-actions">
         <button class="btn btn-sm btn-sage" onclick="addFromRec('${encodeURIComponent(b.title)}','${encodeURIComponent(b.author)}','${encodeURIComponent(b.genre)}')">+ Add to Journal</button>
-        <a class="btn btn-sm btn-outline" href="${SITE_URL}" target="_blank">View on RLB Designs →</a>
-      </div></div>`;
+        <a class="btn btn-sm btn-outline" href="${amazonLink}" target="_blank">View on Amazon →</a>
+        <a class="btn btn-sm btn-ghost" href="${SITE_URL}" target="_blank">RLB Designs</a>
+      </div>
+    </div>`;
   });
-  return html;
+
+  if (similar.length) {
+    html += `<div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--text-dark);margin:22px 0 12px;padding-top:18px;border-top:1px solid var(--border)">
+      You might also enjoy…
+    </div>`;
+    similar.forEach(b => {
+      html += `<div class="rec-card">
+        <div class="rec-badge similar">📚 Similar Reads</div>
+        <div class="rec-title">${escHtml(b.title)}</div>
+        <div class="rec-author">by ${escHtml(b.author)}</div>
+        <div class="rec-reason">${escHtml(b.reason)}</div>
+        <div class="rec-actions">
+          <button class="btn btn-sm btn-outline" onclick="addFromRec('${encodeURIComponent(b.title)}','${encodeURIComponent(b.author)}','')">+ Add to Journal</button>
+        </div>
+      </div>`;
+    });
+  } else {
+    html += `<div style="font-size:13px;color:var(--text-light);font-style:italic;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+      💡 Tip: Try describing a genre, age group, or mood — like "cozy coloring books" or "picture books about feelings" — for more tailored results.
+    </div>`;
+  }
+
+  list.innerHTML = html;
 }
 
 function addFromRec(title, author, genre) {

@@ -1,29 +1,99 @@
 [
   {
-    "title": "Clean Table: Garden-to-Table Recipes",
-    "author": "R.L. Bradford",
-    "genre": "Cookbook / Recipe",
-    "asin": "",
-    "desc": "Alpha-Gal safe, dairy-free, mammal-free recipes built around organic, whole ingredients. Ideal for clean eating and cancer recovery nutrition.",
-    "color": "#7a9e87",
-    "tags": ["cookbook", "alpha-gal", "dairy-free", "clean eating", "wellness", "garden"]
-  },
-  {
-    "title": "Zentangle Mandalas: A Coloring Journey",
-    "author": "R.L. Bradford",
-    "genre": "Coloring Book",
-    "asin": "",
-    "desc": "Intricate mandala and zentangle designs for mindful, meditative coloring. Loved by teens and adults for stress relief and creative flow.",
-    "color": "#d4a5a0",
-    "tags": ["coloring", "mandala", "zentangle", "adults", "mindfulness", "art"]
-  },
-  {
-    "title": "Meadow Friends Adventures",
-    "author": "R.L. Bradford",
+    "title": "Leo Puddlejump's Bumpy Ride",
+    "author": "Rachel Baldwin",
     "genre": "Children's Picture Book",
-    "asin": "",
-    "desc": "Sweet, nature-inspired picture books starring loveable animal characters. Perfect for ages 4–7.",
+    "series": "The Wobbly Wonder Series",
+    "asin": "B0GPNRWYWV",
+    "desc": "Leo wants to be perfect, but his unicycle is wobbly. A heartwarming story about overcoming perfectionism, embracing mistakes, and the joy of resilience.",
     "color": "#c9a84c",
-    "tags": ["picture book", "children", "ages 4-7", "nature", "animals", "gift"]
+    "tags": ["children", "picture book", "ages 4-8", "resilience", "perfectionism", "emotions", "growth mindset", "wobbly wonder"]
+  },
+  {
+    "title": "Leo Puddlejump and the Silent Stage",
+    "author": "Rachel Baldwin",
+    "genre": "Children's Picture Book",
+    "series": "The Wobbly Wonder Series",
+    "asin": "B0GRZYZG7V",
+    "desc": "A story about finding your voice, helping a friend, and discovering true bravery. Perfect for shy children or those facing a fear of speaking up.",
+    "color": "#8ba3c4",
+    "tags": ["children", "picture book", "ages 4-8", "bravery", "shyness", "emotions", "friendship", "wobbly wonder"]
+  },
+  {
+    "title": "Leo Puddlejump's Upside-Down Day",
+    "author": "Rachel Baldwin",
+    "genre": "Children's Picture Book",
+    "series": "The Wobbly Wonder Series",
+    "asin": "B0GX6CFZY5",
+    "desc": "When rain ruins Leo's perfect plan, he learns to trade grumbles for splashes. A story about cognitive flexibility and finding the fun when things don't go your way.",
+    "color": "#7a9e87",
+    "tags": ["children", "picture book", "ages 4-8", "flexibility", "optimism", "emotions", "rainy day", "wobbly wonder"]
+  },
+  {
+    "title": "Leo Puddlejump's Best Friend Blunder",
+    "author": "Rachel Baldwin",
+    "genre": "Children's Picture Book",
+    "series": "The Wobbly Wonder Series",
+    "asin": "B0GXG11RSX",
+    "desc": "Leo breaks his best friend's favorite toy and must find the courage to tell the truth. A story about honesty, forgiveness, and why friends matter more than things.",
+    "color": "#d4a5a0",
+    "tags": ["children", "picture book", "ages 4-8", "honesty", "friendship", "forgiveness", "conflict resolution", "wobbly wonder"]
+  },
+  {
+    "title": "GalPal Cookbook: Thriving with Alpha-Gal Sensitivity",
+    "author": "Rachel Baldwin",
+    "genre": "Cookbook / Recipe",
+    "series": "Alpha-Gal Kitchen",
+    "asin": "B0CZ7FWTYV",
+    "desc": "66 carefully curated alpha-gal safe recipes from breakfast to dinner, with vegan options throughout. Designed for those navigating alpha-gal syndrome without sacrificing flavor.",
+    "color": "#7a9e87",
+    "tags": ["cookbook", "alpha-gal", "dairy-free", "mammal-free", "clean eating", "wellness", "vegan options", "alpha-gal kitchen"]
+  },
+  {
+    "title": "Feather & Fin: A Cookbook for Two, Alpha-Gal Friendly & Flavor-Full",
+    "author": "Rachel Baldwin",
+    "genre": "Cookbook / Recipe",
+    "series": "Alpha-Gal Kitchen",
+    "asin": "B0FD7HMS7N",
+    "desc": "Quick weeknight meals to impressive date night dinners — all poultry and seafood based, alpha-gal safe. Proves that alpha-gal syndrome doesn't mean sacrificing taste.",
+    "color": "#a8c4c4",
+    "tags": ["cookbook", "alpha-gal", "dairy-free", "seafood", "poultry", "couples cooking", "clean eating", "alpha-gal kitchen"]
+  },
+  {
+    "title": "Too Tired to Stir: Comfort Food for the Chronically Done",
+    "author": "Rachel Baldwin",
+    "genre": "Cookbook / Recipe",
+    "series": "Alpha-Gal Kitchen",
+    "asin": "B0FLYD9ND3",
+    "desc": "Comforting, easy alpha-gal safe recipes for those days when energy is low but you still need to eat well. Perfect for chronic illness, fatigue, and recovery.",
+    "color": "#d4c4a8",
+    "tags": ["cookbook", "alpha-gal", "dairy-free", "easy recipes", "chronic illness", "fatigue", "comfort food", "wellness", "cancer recovery"]
+  },
+  {
+    "title": "Cozy Corner Vibe: Coloring Book",
+    "author": "Rachel Baldwin",
+    "genre": "Coloring Book",
+    "asin": "B0GX5T89WD",
+    "desc": "A relaxing room coloring book with comfy nooks, hygge decor, and aesthetic interior scenes. Soothing and detailed designs for all ages.",
+    "color": "#c4a8d4",
+    "tags": ["coloring book", "adults", "all ages", "hygge", "interior design", "relaxation", "mindfulness", "cozy"]
+  },
+  {
+    "title": "Christmas Mandala Adult Coloring Book",
+    "author": "Rachel Baldwin",
+    "genre": "Coloring Book",
+    "asin": "B0G7G8P2SQ",
+    "desc": "50 premium holiday-themed mandalas, decorated trees, and winter scenes. Intricate, sophisticated designs for adults who love detail and a festive meditative escape.",
+    "color": "#d4a5a0",
+    "tags": ["coloring book", "adults", "christmas", "holiday", "mandala", "winter", "relaxation", "mindfulness"]
+  },
+  {
+    "title": "Zen Gratitude Journal (Black & Gold)",
+    "author": "Rachel Baldwin",
+    "genre": "Journal / Planner",
+    "asin": "B0GX9TWCDW",
+    "desc": "100 pages of daily gratitude prompts and free-write space in a striking black and gold design. A mindful daily practice in a beautiful package.",
+    "color": "#3a3028",
+    "tags": ["journal", "gratitude", "mindfulness", "wellness", "daily practice", "self-care", "planner"]
   }
 ]
