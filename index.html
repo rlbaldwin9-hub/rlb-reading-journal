@@ -741,7 +741,7 @@ function buildReason(book, tokens) {
     reasons.push('a lovely seasonal gift or personal treat');
 
   if (!reasons.length) reasons.push('a great match for what you described');
-  return book.desc + ' ' + reasons.slice(0, 2).map((r,i) => i===0 ? 'This is ' + r + '.' : 'It's also ' + r + '.').join(' ');
+  return book.desc + ' ' + reasons.slice(0, 2).map((r,i) => i===0 ? 'This is ' + r + '.' : 'It\'s also ' + r + '.').join(' ');
 }
 
 // Fetch similar books from Open Library (free, no key)
