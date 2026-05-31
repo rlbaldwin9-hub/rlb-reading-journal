@@ -165,17 +165,27 @@ body { font-family: 'Lato', sans-serif; background: var(--cream); color: var(--t
 .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(90px); background: var(--text-dark); color: white; padding: 11px 22px; border-radius: 10px; font-size: 13px; font-family: 'Lato', sans-serif; z-index: 9999; transition: transform .3s ease; white-space: nowrap; max-width: 90vw; }
 .toast.show { transform: translateX(-50%) translateY(0); }
 
-/* CATALOG GRID */
+/* CATALOG */
 .catalog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
 .catalog-card { background: var(--white); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; transition: transform .15s, box-shadow .15s; }
 .catalog-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
-.catalog-card-top { height: 6px; background: var(--sage); }
+.catalog-card-top { height: 6px; }
 .catalog-card-body { padding: 14px 15px; }
 .catalog-card-title { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 600; line-height: 1.3; margin-bottom: 3px; }
-.catalog-card-author { font-size: 12px; color: var(--text-light); margin-bottom: 6px; }
-.catalog-card-genre { font-size: 11px; color: var(--sage); font-weight: 700; letter-spacing: .3px; margin-bottom: 8px; }
+.catalog-card-author { font-size: 12px; color: var(--text-light); margin-bottom: 4px; }
+.catalog-card-series { font-size: 11px; color: var(--gold); font-weight: 700; letter-spacing: .3px; margin-bottom: 6px; font-style: italic; }
 .catalog-card-desc { font-size: 12px; color: var(--text-mid); line-height: 1.5; margin-bottom: 10px; }
 .catalog-card-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+/* Catalog filter controls */
+.cat-controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 18px; }
+.cat-select { padding: 8px 14px; border: 1px solid var(--border); border-radius: 10px; font-family: 'Lato', sans-serif; font-size: 13px; background: var(--white); color: var(--text-dark); cursor: pointer; appearance: auto; }
+.cat-select:focus { outline: none; border-color: var(--sage); }
+.cat-search { flex: 1; min-width: 160px; padding: 8px 14px; border: 1px solid var(--border); border-radius: 10px; font-family: 'Lato', sans-serif; font-size: 13px; background: var(--white); color: var(--text-dark); }
+.cat-search:focus { outline: none; border-color: var(--sage); }
+.cat-count { font-size: 12px; color: var(--text-light); font-style: italic; white-space: nowrap; }
+/* Series grouping header */
+.series-header { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--gold); margin: 22px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--gold-light); display: flex; align-items: center; gap: 8px; }
+.series-header span { font-size: 12px; color: var(--text-light); font-family: 'Lato', sans-serif; font-style: italic; font-weight: 400; }
 
 @media (max-width:600px) {
   .form-grid { grid-template-columns: 1fr; }
@@ -323,17 +333,32 @@ body { font-family: 'Lato', sans-serif; background: var(--cream); color: var(--t
       <h2 id="catalog-heading">My Catalog</h2>
       <a href="https://www.rlbdesigns.com" target="_blank" class="btn btn-sm btn-sage">Visit Store →</a>
     </div>
-    <div style="background:var(--white);border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+
+    <!-- Catalog name customisation -->
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
       <label style="font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--text-light);white-space:nowrap;">Catalog Name</label>
       <input type="text" id="catalog-name-input" placeholder="e.g. My Book Collection, Rachel's Picks…"
         style="flex:1;min-width:180px;padding:7px 12px;border:1px solid var(--border);border-radius:8px;font-family:'Lato',sans-serif;font-size:13px;background:var(--cream);color:var(--text-dark);"
         oninput="saveCatalogName(this.value)">
-      <span style="font-size:12px;color:var(--text-light);font-style:italic">This name appears as your catalog heading.</span>
     </div>
-    <div id="catalog-status" style="font-size:13px;color:var(--text-light);margin-bottom:14px;font-style:italic"></div>
-    <div class="catalog-grid" id="catalog-grid">
-      <div class="ai-loading"><div class="spinner"></div><em>Loading catalog…</em></div>
+
+    <!-- Filter controls -->
+    <div class="cat-controls">
+      <select class="cat-select" id="cat-filter-category" onchange="renderCatalog()">
+        <option value="">All Categories</option>
+      </select>
+      <select class="cat-select" id="cat-filter-sub" onchange="renderCatalog()">
+        <option value="">All Sub-categories</option>
+      </select>
+      <select class="cat-select" id="cat-filter-series" onchange="renderCatalog()">
+        <option value="">All Series</option>
+      </select>
+      <input type="text" class="cat-search" id="cat-search" placeholder="🔍 Search titles…" oninput="renderCatalog()">
+      <span class="cat-count" id="cat-count"></span>
     </div>
+
+    <div id="catalog-status" style="font-size:12px;color:var(--text-light);margin-bottom:10px;font-style:italic"></div>
+    <div id="catalog-grid"></div>
   </div>
 
 
@@ -446,36 +471,116 @@ async function loadCatalog() {
     liveCatalog = await res.json();
     document.getElementById('catalog-status').textContent =
       `${liveCatalog.length} title${liveCatalog.length!==1?'s':''} in your catalog`;
+    populateCatalogFilters();
   } catch(e) {
     liveCatalog = FALLBACK_CATALOG;
     document.getElementById('catalog-status').textContent =
       'Showing built-in catalog. Host rlb-catalog.json on your site for live updates.';
+    populateCatalogFilters();
   }
   renderCatalog();
 }
 
+function populateCatalogFilters() {
+  const catalog = liveCatalog || FALLBACK_CATALOG;
+  const cats    = [...new Set(catalog.map(b => b.category).filter(Boolean))].sort();
+  const subs    = [...new Set(catalog.map(b => b.subcategory).filter(Boolean))].sort();
+  const series  = [...new Set(catalog.map(b => b.series).filter(Boolean))].sort();
+
+  const catSel = document.getElementById('cat-filter-category');
+  const subSel = document.getElementById('cat-filter-sub');
+  const serSel = document.getElementById('cat-filter-series');
+  if (!catSel) return;
+
+  catSel.innerHTML  = '<option value="">All Categories</option>'  + cats.map(c  => `<option value="${escHtml(c)}">${escHtml(c)}</option>`).join('');
+  subSel.innerHTML  = '<option value="">All Sub-categories</option>' + subs.map(s  => `<option value="${escHtml(s)}">${escHtml(s)}</option>`).join('');
+  serSel.innerHTML  = '<option value="">All Series</option>'      + series.map(s => `<option value="${escHtml(s)}">${escHtml(s)}</option>`).join('');
+}
+
 function renderCatalog() {
   const grid = document.getElementById('catalog-grid');
-  if (!liveCatalog || !liveCatalog.length) {
-    grid.innerHTML = '<div class="empty-state"><span>📦</span>No catalog items found.</div>';
+  if (!grid) return;
+  const catalog = liveCatalog || FALLBACK_CATALOG;
+  if (!catalog || !catalog.length) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><span>📦</span>No catalog items found.</div>';
     return;
   }
-  grid.innerHTML = liveCatalog.map(b => {
-    const amazonLink = 'https://www.amazon.com/stores/Rachel-Baldwin/author/B0FGJZ6FRF';
-    return `<div class="catalog-card">
-      <div class="catalog-card-top" style="background:${b.color||'var(--sage)'}"></div>
-      <div class="catalog-card-body">
-        <div class="catalog-card-title">${escHtml(b.title)}</div>
-        <div class="catalog-card-author">by ${escHtml(b.author)}</div>
-        <div class="catalog-card-genre">${escHtml(b.genre)}</div>
-        <div class="catalog-card-desc">${escHtml(b.desc)}</div>
-        <div class="catalog-card-actions">
-          <a class="btn btn-sm btn-sage" href="${amazonLink}" target="_blank">View on Amazon</a>
-          <button class="btn btn-sm btn-outline" onclick="addFromCatalog('${encodeURIComponent(b.title)}','${encodeURIComponent(b.author)}','${encodeURIComponent(b.genre)}','${encodeURIComponent(b.color||'')}')">+ Want to Read</button>
-        </div>
-      </div>
+
+  const filterCat    = document.getElementById('cat-filter-category')?.value || '';
+  const filterSub    = document.getElementById('cat-filter-sub')?.value || '';
+  const filterSeries = document.getElementById('cat-filter-series')?.value || '';
+  const searchQ      = (document.getElementById('cat-search')?.value || '').toLowerCase().trim();
+
+  let filtered = catalog.filter(b => {
+    if (filterCat    && b.category    !== filterCat)    return false;
+    if (filterSub    && b.subcategory !== filterSub)    return false;
+    if (filterSeries && b.series      !== filterSeries) return false;
+    if (searchQ) {
+      const hay = [b.title, b.author, b.desc, b.series, b.subcategory, ...(b.tags||[])].join(' ').toLowerCase();
+      if (!searchQ.split(' ').every(w => hay.includes(w))) return false;
+    }
+    return true;
+  });
+
+  const countEl = document.getElementById('cat-count');
+  if (countEl) countEl.textContent = `${filtered.length} of ${catalog.length} titles`;
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><span>🔍</span>No books match that filter.</div>';
+    return;
+  }
+
+  // Group by category → subcategory → series
+  const grouped = {};
+  filtered.forEach(b => {
+    const cat = b.category || 'Other';
+    const sub = b.subcategory || '';
+    const ser = b.series || '';
+    const key = cat + '||' + sub;
+    if (!grouped[key]) grouped[key] = { cat, sub, series: {} };
+    if (!grouped[key].series[ser]) grouped[key].series[ser] = [];
+    grouped[key].series[ser].push(b);
+  });
+
+  let html = '';
+  Object.values(grouped).forEach(({ cat, sub, series }) => {
+    // Category heading
+    html += `<div style="margin:24px 0 10px;padding-bottom:8px;border-bottom:2px solid var(--cream-dark);">
+      <span style="font-family:'Playfair Display',serif;font-size:20px;font-weight:600;color:var(--text-dark)">${escHtml(cat)}</span>
+      ${sub ? `<span style="font-size:13px;color:var(--text-light);margin-left:10px;font-style:italic">· ${escHtml(sub)}</span>` : ''}
     </div>`;
-  }).join('');
+
+    Object.entries(series).forEach(([ser, books]) => {
+      // Series subheading (if any)
+      if (ser) {
+        html += `<div class="series-header">📖 ${escHtml(ser)} <span>${books.length} book${books.length!==1?'s':''}</span></div>`;
+      }
+      html += '<div class="catalog-grid" style="margin-bottom:16px">';
+      books.forEach(b => {
+        const amazonLink = b.asin
+          ? `https://www.amazon.com/dp/${b.asin}`
+          : 'https://www.amazon.com/stores/Rachel-Baldwin/author/B0FGJZ6FRF';
+        const siteLink = b.siteUrl || SITE_URL;
+        html += `<div class="catalog-card">
+          <div class="catalog-card-top" style="background:${b.color||'var(--sage)'}"></div>
+          <div class="catalog-card-body">
+            <div class="catalog-card-title">${escHtml(b.title)}</div>
+            <div class="catalog-card-author">by ${escHtml(b.author)}</div>
+            ${b.series ? `<div class="catalog-card-series">📖 ${escHtml(b.series)}</div>` : ''}
+            <div class="catalog-card-desc">${escHtml(b.desc)}</div>
+            <div class="catalog-card-actions">
+              <a class="btn btn-sm btn-sage" href="${siteLink}" target="_blank">View Book</a>
+              ${b.asin ? `<a class="btn btn-sm btn-ghost" href="${amazonLink}" target="_blank">Amazon</a>` : ''}
+              <button class="btn btn-sm btn-outline" onclick="addFromCatalog('${encodeURIComponent(b.title)}','${encodeURIComponent(b.author)}','${encodeURIComponent(b.category||b.genre||'')}','${encodeURIComponent(b.color||'')}')">+ Want to Read</button>
+            </div>
+          </div>
+        </div>`;
+      });
+      html += '</div>';
+    });
+  });
+
+  grid.innerHTML = html;
 }
 
 function addFromCatalog(title, author, genre, color) {
