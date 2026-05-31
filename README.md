@@ -12,10 +12,10 @@ A beautiful, interactive reading journal for [rlbdesigns.com](https://rlbdesigns
 ## Live site
 
 Once deployed, your journal will be live at:
-`https://YOUR-USERNAME.github.io/rlb-reading-journal/`
+`https://rlbaldwin9-hub.github.io/rlb-reading-journal/`
 
 Or at your custom domain if configured.
-
+`http://readingjournal.rlbdesigns.com/`
 ---
 
 ## Adding a new book to the catalog
@@ -25,7 +25,7 @@ Open `rlb-catalog.json` and copy/paste one of the existing blocks:
 ```json
 {
   "title": "Your New Book Title",
-  "author": "R.L. Bradford",
+  "author": "R.L. Baldwin-RLBdesigns",
   "genre": "Genre Here",
   "asin": "B0XXXXXXXXX",
   "desc": "A short, warm description of the book (1–2 sentences).",
@@ -43,13 +43,14 @@ Open `rlb-catalog.json` and copy/paste one of the existing blocks:
 - Soft Blue: `#8ba3c4`
 - Lavender: `#c4a8d4`
 - Warm Tan: `#d4c4a8`
-
+- White: `#ffffff`
+- black: `#000000`
 ---
 
 ## Setup instructions
 
 ### Step 1 — Create a GitHub account
-Go to [github.com](https://github.com) and sign up (free).
+github account rlbaldwin9-hub
 
 ### Step 2 — Create a new repository
 1. Click the **+** icon → **New repository**
@@ -70,22 +71,15 @@ Go to [github.com](https://github.com) and sign up (free).
 5. Wait ~2 minutes, then visit the URL shown
 
 ### Step 5 — (Optional) Connect your custom domain
-If you want `journal.rlbdesigns.com` instead of the GitHub URL:
+If you want `readingjournal.rlbdesigns.com` instead of the GitHub URL:
 
 1. In repo Settings → Pages → **Custom domain**, enter: `journal.rlbdesigns.com`
 2. Click Save (this creates a `CNAME` file automatically)
 3. In your domain registrar's DNS settings, add a CNAME record:
-   - **Name:** `journal`
-   - **Points to:** `YOUR-USERNAME.github.io`
+   - **Name:** `readingjournal`
+   - **Points to:** `rlbaldwin9-hub.github.io`
 4. Wait up to 24 hours for DNS to propagate
-5. Check **Enforce HTTPS** once it's ready
-
-### Step 6 — Enable AI Recommendations
-1. Get a free API key at [console.anthropic.com](https://console.anthropic.com)
-2. Open the journal on your site
-3. Click the gold notice bar at the top and paste your key
-4. Done — Claude will now power live book recommendations
-
+5. Check **Enforce HTTPS** once it's read
 ---
 
 ## Updating your catalog (after initial setup)
@@ -103,7 +97,7 @@ If you want `journal.rlbdesigns.com` instead of the GitHub URL:
 
 In Google Sites, add an **Embed** element and paste your GitHub Pages URL:
 ```
-https://YOUR-USERNAME.github.io/rlb-reading-journal/
+https://rlbaldwin9-hub.github.io/rlb-reading-journal/
 ```
 Or link to it from your navigation menu as an external page.
 
