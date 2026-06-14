@@ -1,106 +1,134 @@
-# RLB Designs Reading Journal
+# RLB Designs — My Reading Journal
+## Interactive reading tracker for rlbdesigns.com readers
 
-A beautiful, interactive reading journal for [rlbdesigns.com](https://rlbdesigns.com) — built as a free static site hosted on GitHub Pages.
+**Repo:** `rlbaldwin9-hub/rlb-reading-journal`  
+**GitHub Pages URL:** https://rlbaldwin9-hub.github.io/rlb-reading-journal/  
+**Live Custom URL:** http://readingjournal.rlbdesigns.com/  
+**DNS:** Cloudflare CNAME `readingjournal` → `rlbaldwin9-hub.github.io` (grey cloud / DNS only)
 
-## What's included
-
-| File | Purpose |
-|------|---------|
-| `index.html` | The full reading journal app |
-| `rlb-catalog.json` | Your live book catalog — edit this to add new titles |
-
-## Live site
-
-Once deployed, your journal will be live at:
-`https://rlbaldwin9-hub.github.io/rlb-reading-journal/`
-
-Or at your custom domain if configured.
-`http://readingjournal.rlbdesigns.com/`
 ---
 
-## Adding a new book to the catalog
+## Files in This Repo
 
-Open `rlb-catalog.json` and copy/paste one of the existing blocks:
+| File | Purpose | How often edited |
+|------|---------|-----------------|
+| `index.html` | The entire app — HTML, CSS, JavaScript | Rarely (bug fixes only) |
+| `rlb-catalog.json` | All book data — drives catalog tab AND recommendations | Every new book published |
+| `README.md` | This file — for Rachel only, not visible to visitors | As needed |
+| `CNAME` | Auto-created by GitHub when custom domain was set | Never touch |
+
+---
+
+## ⚠️ ADDING NEW PUBLISHED BOOKS
+
+**Edit `rlb-catalog.json` only — do NOT edit `index.html`.**
+
+Copy this block, fill in the details, and paste it inside the `[...]` array.  
+Add a comma after the closing `}` of the previous entry.
 
 ```json
 {
-  "title": "Your New Book Title",
-  "author": "R.L. Baldwin-RLBdesigns",
-  "genre": "Genre Here",
+  "category": "Cookbooks",
+  "subcategory": "",
+  "series": "",
+  "title": "Your Book Title Here",
+  "author": "Rachel Baldwin-RLBdesigns",
   "asin": "B0XXXXXXXXX",
-  "desc": "A short, warm description of the book (1–2 sentences).",
+  "siteUrl": "https://www.rlbdesigns.com/books/[path]",
+  "desc": "A one or two sentence description that captures the heart of the book — this is what the recommendation engine reads.",
   "color": "#7a9e87",
-  "tags": ["keyword1", "keyword2"]
+  "tags": ["clean eating", "alpha-gal", "dairy-free", "gluten-free", "wellness"]
 }
 ```
 
-**Finding your ASIN:** On any Amazon product page, look at the URL — it contains `/dp/B0XXXXXXXXX`. That 10-character code after `/dp/` is your ASIN.
-
-**Spine colors (your brand palette):**
-- Sage: `#7a9e87`
-- Blush: `#d4a5a0`
-- Gold: `#c9a84c`
-- Soft Blue: `#8ba3c4`
-- Lavender: `#c4a8d4`
-- Warm Tan: `#d4c4a8`
-- White: `#ffffff`
-- black: `#000000`
----
-
-## Setup instructions
-
-### Step 1 — Create a GitHub account
-github account rlbaldwin9-hub
-
-### Step 2 — Create a new repository
-1. Click the **+** icon → **New repository**
-2. Name it: `rlb-reading-journal`
-3. Set to **Public**
-4. Click **Create repository**
-
-### Step 3 — Upload your files
-1. Click **uploading an existing file** (or drag-and-drop)
-2. Upload both `index.html` and `rlb-catalog.json`
-3. Click **Commit changes**
-
-### Step 4 — Enable GitHub Pages
-1. Go to your repo → **Settings** → **Pages** (left sidebar)
-2. Under **Source**, select **Deploy from a branch**
-3. Branch: `main` | Folder: `/ (root)`
-4. Click **Save**
-5. Wait ~2 minutes, then visit the URL shown
-
-### Step 5 — (Optional) Connect your custom domain
-If you want `readingjournal.rlbdesigns.com` instead of the GitHub URL:
-
-1. In repo Settings → Pages → **Custom domain**, enter: `journal.rlbdesigns.com`
-2. Click Save (this creates a `CNAME` file automatically)
-3. In your domain registrar's DNS settings, add a CNAME record:
-   - **Name:** `readingjournal`
-   - **Points to:** `rlbaldwin9-hub.github.io`
-4. Wait up to 24 hours for DNS to propagate
-5. Check **Enforce HTTPS** once it's read
----
-
-## Updating your catalog (after initial setup)
-
-1. Go to your GitHub repository
+### Steps to add a book on GitHub:
+1. Go to https://github.com/rlbaldwin9-hub/rlb-reading-journal
 2. Click `rlb-catalog.json`
-3. Click the **pencil icon** (Edit)
-4. Add your new book block to the JSON array
-5. Click **Commit changes**
-6. Your live site updates within seconds — no code skills needed
+3. Click the **pencil ✏️** icon
+4. Add the new book block (with comma after the previous entry)
+5. Validate your JSON at **https://jsonlint.com** before saving
+6. Click **Commit changes** — live site updates within 60 seconds
+
+### Valid `category` values (must match exactly):
+`Cookbooks` · `Children's Books` · `Children's Coloring Books` · `Children's Activity Books` · `Adult Coloring Books` · `Journals` · `Notebooks`
+
+### Valid `subcategory` values:
+- Children's Books → `PreK–Age 9` or `Pre-Teen Age 9–13`
+- Coloring/Activity → `Holiday`
+- All others → leave `""`
+
+### Finding your ASIN:
+Amazon URL: `https://www.amazon.com/dp/B0XXXXXXXXX` — the ASIN is the 10-character code after `/dp/`
+
+### Spine color palette:
+| Hex | Use for |
+|-----|---------|
+| `#7a9e87` | Cookbooks, wellness, nature (Sage) |
+| `#d4a5a0` | Picture books, romance (Blush) |
+| `#c9a84c` | Adventure, special titles (Gold) |
+| `#8ba3c4` | Sci-fi, space, boys (Soft Blue) |
+| `#c4a8d4` | Fantasy, magic, girls (Lavender) |
+| `#d4c4a8` | Comfort reads, journals (Warm Tan) |
+| `#a8c4c4` | Seafood cookbooks, water (Teal) |
+| `#b8c49a` | Nature, garden, homestead (Green) |
+| `#3a3028` | Mystery, journals, sophisticated (Dark) |
 
 ---
 
-## Linking from Google Sites
+## Features
 
-In Google Sites, add an **Embed** element and paste your GitHub Pages URL:
-```
-https://rlbaldwin9-hub.github.io/rlb-reading-journal/
-```
-Or link to it from your navigation menu as an external page.
+- **My Shelf** — Log any book with title, author, genre, status, star rating, spine color, notes, dates
+- **Log a Book** — Full entry form with color picker and star rating
+- **Reading Goals** — Yearly goal with animated ring tracker and milestone badges
+- **Recommendations** — Smart local scoring engine + Open Library API. No API key needed. Your catalog books show first.
+- **My Catalog** — Full RLB catalog with Category / Sub-category / Series dropdowns + search. Links to rlbdesigns.com and Amazon.
+- **Share My List** — Canvas book spine image + shareable URL. Personal notes excluded for privacy.
 
 ---
 
-*Built for RLB Designs by Claude · rlbdesigns.com*
+## Updating the App (index.html)
+
+Only needed for bug fixes or new features:
+1. Get the **complete updated `index.html`** from Claude — never partial snippets
+2. Ask Claude to **validate JavaScript syntax** before delivering
+3. Test locally (open in Chrome → F12 → Console — no red errors)
+4. Upload to GitHub to replace existing `index.html`
+5. Wait 2 minutes → hard-refresh: Ctrl+Shift+R
+
+---
+
+## Tech Notes
+
+- **Data storage:** All reader data in browser `localStorage` — no server needed
+- **JSON path:** Must be `./rlb-catalog.json` (relative path) — full domain URL causes CORS error
+- **Recommendation engine:** JS scoring with synonym expansion + tag matching + Open Library fallback
+- **Buttons in dynamic HTML:** Use `data-*` attributes + event delegation (not inline onclick) to avoid quote-escaping bugs
+- **Modal overlay:** `pointer-events: none` when hidden prevents click-blocking
+
+---
+
+## Bug History
+
+| Bug | Cause | Fix Applied |
+|-----|-------|-------------|
+| Nothing clickable on launch | Unescaped apostrophe `'It's'` in JS string crashed entire script | Escaped as `'It\'s'` |
+| All buttons blocked | Modal overlay intercepting pointer events when hidden | Added `pointer-events:none` to hidden modal |
+| Add to Journal broken in recs/catalog | Inline `onclick` with `encodeURIComponent` inside template literals caused encoding conflict | Switched to `data-*` attributes + event delegation |
+| CORS error loading catalog | Full domain URL used for JSON fetch | Changed to relative `./rlb-catalog.json` |
+| Broken links | Missing `www` prefix | Always use `https://www.rlbdesigns.com` |
+
+---
+
+## Backlog / Coming Soon
+
+- [ ] Fill in ASIN fields as books go live on Amazon
+- [ ] Enable HTTPS: GitHub Pages → Settings → Pages → Enforce HTTPS (once Cloudflare DNS propagates)
+- [ ] Add Notebooks category when ready
+- [ ] Add The Enchanted Storyteller's Studio when published
+- [ ] Add The Galactic Storyteller's Studio when published
+- [ ] Add Micro-Biology Graphic Novel Series when published
+- [ ] Add Taco Territory Book 2 when published
+
+---
+
+*© 2025 RLB Designs · Rachel Baldwin · rlbdesigns.com*

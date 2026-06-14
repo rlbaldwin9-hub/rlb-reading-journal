@@ -571,7 +571,7 @@ function renderCatalog() {
             <div class="catalog-card-actions">
               <a class="btn btn-sm btn-sage" href="${siteLink}" target="_blank">View Book</a>
               ${b.asin ? `<a class="btn btn-sm btn-ghost" href="${amazonLink}" target="_blank">Amazon</a>` : ''}
-              <button class="btn btn-sm btn-outline" onclick="addFromCatalog('${encodeURIComponent(b.title)}','${encodeURIComponent(b.author)}','${encodeURIComponent(b.category||b.genre||'')}','${encodeURIComponent(b.color||'')}')">+ Want to Read</button>
+              <button class="btn btn-sm btn-outline rlb-add-cat" data-title="${b.title}" data-author="${b.author}" data-genre="${b.category||b.genre||''}" data-color="${b.color||''}" >+ Want to Read</button>
             </div>
           </div>
         </div>`;
@@ -584,9 +584,9 @@ function renderCatalog() {
 }
 
 function addFromCatalog(title, author, genre, color) {
-  const t = decodeURIComponent(title);
-  const a = decodeURIComponent(author);
-  if (books.find(b => b.title === t)) { toast('"' + t + '" is already in your journal!'); return; }
+  const t = title;
+  const a = author;
+  if (books.find(b => b.title === t)) { toast(t + ' is already in your journal!'); return; }
   books.unshift({ id: Date.now(), title: t, author: a, genre: decodeURIComponent(genre),
     status: 'want', rating: 0, color: decodeURIComponent(color) || SPINE_COLORS[0],
     notes:'', start:'', finish:'', added: new Date().toISOString() });
@@ -913,11 +913,7 @@ async function findRecommendations() {
       <div class="rec-title">${escHtml(b.title)}</div>
       <div class="rec-author">by ${escHtml(b.author)}${b.series ? ` <span style="color:var(--text-light);font-size:12px">· ${escHtml(b.series)}</span>` : ''}</div>
       <div class="rec-reason">${escHtml(buildReason(b, tokens))}</div>
-      <div class="rec-actions">
-        <button class="btn btn-sm btn-sage" onclick="addFromRec('${encodeURIComponent(b.title)}','${encodeURIComponent(b.author)}','${encodeURIComponent(b.genre)}')">+ Add to Journal</button>
-        <a class="btn btn-sm btn-outline" href="${amazonLink}" target="_blank">View on Amazon →</a>
-        <a class="btn btn-sm btn-ghost" href="${SITE_URL}" target="_blank">RLB Designs</a>
-      </div>
+      <div class="rec-actions">\n        <button class="btn btn-sm btn-sage rlb-add-rec" data-title="${b.title}" data-author="${b.author}" data-genre="${b.genre||''}">+ Add to Journal</button>\n        <a class="btn btn-sm btn-outline" href="${amazonLink}" target="_blank">View on Amazon →</a>\n        <a class="btn btn-sm btn-ghost" href="${SITE_URL}" target="_blank">RLB Designs</a>\n      </div>
     </div>`;
   });
 
@@ -932,7 +928,7 @@ async function findRecommendations() {
         <div class="rec-author">by ${escHtml(b.author)}</div>
         <div class="rec-reason">${escHtml(b.reason)}</div>
         <div class="rec-actions">
-          <button class="btn btn-sm btn-outline" onclick="addFromRec('${encodeURIComponent(b.title)}','${encodeURIComponent(b.author)}','')">+ Add to Journal</button>
+          <button class="btn btn-sm btn-outline rlb-add-rec" data-title="${b.title}" data-author="${b.author}" data-genre="">+ Add to Journal</button>
         </div>
       </div>`;
     });
@@ -946,8 +942,8 @@ async function findRecommendations() {
 }
 
 function addFromRec(title, author, genre) {
-  const t = decodeURIComponent(title);
-  books.unshift({ id:Date.now(), title:t, author:decodeURIComponent(author), genre:decodeURIComponent(genre),
+  const t = title;
+  books.unshift({ id:Date.now(), title:t, author:author, genre:genre,
     status:'want', rating:0, color:SPINE_COLORS[Math.floor(Math.random()*SPINE_COLORS.length)],
     notes:'', start:'', finish:'', added:new Date().toISOString() });
   saveBooks(); renderShelf(); renderGoal(); renderMilestones();
@@ -1132,6 +1128,29 @@ function escHtml(s) {
 
 // Close modal on overlay click
 document.getElementById('share-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+
+// Event delegation for dynamically generated buttons — solves the onclick encoding bug
+document.addEventListener('click', function(e) {
+  // "Add to Journal" buttons in Recommendations tab
+  const recBtn = e.target.closest('.rlb-add-rec');
+  if (recBtn) {
+    const title  = recBtn.getAttribute('data-title')  || '';
+    const author = recBtn.getAttribute('data-author') || '';
+    const genre  = recBtn.getAttribute('data-genre')  || '';
+    addFromRec(title, author, genre);
+    return;
+  }
+  // "+ Want to Read" buttons in My Catalog tab
+  const catBtn = e.target.closest('.rlb-add-cat');
+  if (catBtn) {
+    const title  = catBtn.getAttribute('data-title')  || '';
+    const author = catBtn.getAttribute('data-author') || '';
+    const genre  = catBtn.getAttribute('data-genre')  || '';
+    const color  = catBtn.getAttribute('data-color')  || '';
+    addFromCatalog(title, author, genre, color);
+    return;
+  }
+});
 
 load();
 document.getElementById('footer-year').textContent = new Date().getFullYear();
